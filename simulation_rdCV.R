@@ -66,8 +66,8 @@ NoiseVSgenerate <- SSNoiseNew/SSXgenerate
 
 
 result <- rdCV_RSCA(DATA=Xgenerate, Jk=Jk, R=R, 
-                    LassoSequence = seq(0, 1, by = 0.1), 
-                    GLassoSequence = seq(0, 1, by = 0.1), 
+                    LassoSequence = seq(.5, 1, by = 0.1), 
+                    GLassoSequence = seq(.5, 1, by = 0.1), 
                     n_rep = 1, n_seg = 3, 
                     MaxIter = MAXITER, NRSTARTS = NRSTARTS, 
                     nfolds = 4, ncores = 2)
