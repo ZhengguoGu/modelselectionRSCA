@@ -66,9 +66,42 @@ NoiseVSgenerate <- SSNoiseNew/SSXgenerate
 
 
 result <- rdCV_RSCA(DATA=Xgenerate, Jk=Jk, R=R, 
-                    LassoSequence = seq(.5, 1, by = 0.1), 
-                    GLassoSequence = seq(.5, 1, by = 0.1), 
-                    n_rep = 1, n_seg = 3, 
+                    LassoSequence = seq(.01, 2, by = 0.1), 
+                    GLassoSequence = seq(.5, 2, by = 0.1), 
+                    n_rep = 5, n_seg = 3, 
                     MaxIter = MAXITER, NRSTARTS = NRSTARTS, 
-                    nfolds = 4, ncores = 2)
+                    nfolds = 5)
 
+
+#####################################
+
+OptimumLasso <- .11
+OptimumGLasso <- .5
+method <- "component"
+Pout3dopt <- list()
+Tout3dopt <- list()
+LOSSopt <- array()
+for (n in 1:NRSTARTS){
+  if(method == "datablock"){
+    VarSelectResultOpt <- CDfriedmanV1(DATA=Xgenerate, Jk, R, OptimumLasso, OptimumGLasso, MaxIter = MAXITER)
+  }else if (method == "component"){
+    VarSelectResultOpt <- CDfriedmanV2(DATA=Xgenerate, Jk, R, OptimumLasso, OptimumGLasso, MaxIter = MAXITER)
+  }
+  Pout3dopt[[n]] <- VarSelectResultOpt$Pmatrix
+  Tout3dopt[[n]] <- VarSelectResultOpt$Tmatrix
+  LOSSopt[n] <- VarSelectResultOpt$Loss
+}
+k <- which(LOSSopt == min(LOSSopt))
+if (length(k)>1){
+  pos <- sample(1:length(k), 1)
+  k <- k[pos]
+}
+PoutFinal <- Pout3dopt[[k]]
+ToutFinal <- Tout3dopt[[k]]
+TuckerResults <- TuckerCoef(Ttrue, ToutFinal)
+TuckerValues <- TuckerResults$tucker_value
+PoutBest <- PoutFinal[, TuckerResults$perm]
+
+indSelectedC <- which(PoutBest != 0)
+indDropedC <- which(PoutBest == 0)
+Proportion <- (sum(PTrueCnew[indSelectedC] != 0) + sum(PTrueCnew[indDropedC] == 0))/(sumJk*R)
