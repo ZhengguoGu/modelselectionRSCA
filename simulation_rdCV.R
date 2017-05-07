@@ -71,3 +71,4 @@ result <- rdCV_RSCA(DATA=Xgenerate, Jk=Jk, R=R,
                     n_rep = 1, n_seg = 3, 
                     MaxIter = MAXITER, NRSTARTS = NRSTARTS, 
                     nfolds = 4, ncores = 2)
+

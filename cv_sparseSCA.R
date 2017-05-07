@@ -98,9 +98,12 @@ cv_sparseSCA <- function(DATA, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSe
   if(length(which(vec_PRESS == lowestPress))>1){
     #this means there are more than 1 candidate. 
     max_SE <- max(vec_se[which(vec_PRESS == lowestPress)])  #Note, this is our decision rule: we choose the highest se, so that P may be sparser. 
-  }
+  } else{
+    max_SE <- vec_se[which(vec_PRESS == lowestPress)]
+  } 
+  
   lowestplus1SE <- lowestPress + max_SE
-  LGLindex <- tail(which(abs(vec_PRESS - lowestplus1SE) == min(abs(vec_PRESS - lowestplus1SE)), arr.ind = TRUE), n=1) #in case of multiple best Lasso and Glasso combinations, we choose the last pair
+  LGLindex <- tail(which(abs(PRESS - lowestplus1SE) == min(abs(PRESS - lowestplus1SE)), arr.ind = TRUE), n=1) #in case of multiple best Lasso and Glasso combinations, we choose the last pair
                                                                                                                      # which (usually) is the most sparse result, as the last one has the highest Group Lasso
   OptimumLasso <- LassoSequence[LGLindex[1]]
   OptimumGLasso <- GLassoSequence[LGLindex[2]]

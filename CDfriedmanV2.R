@@ -84,13 +84,14 @@ CDfriedmanV2 <- function(DATA, Jk, R, LASSO, GROUPLASSO, MaxIter){
             
             if(s_l2 <= 0 | S_2Vec_Lambda_norm==0){
               Pt[r ,c(L:U)] <- 0
-            } else if(s_l2 > 0)
+            } else if(s_l2 > 0){
               Pt[r ,c(L:U)] <- s_l2 * c(S_2Vec_Lambda)
             }
           }
         }
         L <- U + 1
       }
+    
       P <- t(Pt)
     }
     
@@ -117,8 +118,7 @@ CDfriedmanV2 <- function(DATA, Jk, R, LASSO, GROUPLASSO, MaxIter){
       Glassopen <- pen_g
       P[abs(P) <= 2 * eps] <- 0
       conv <- 1
-    }
-    else if (iter > MaxIter | LASSO == 0){
+    } else if (iter > MaxIter | LASSO == 0){
       Loss <- Lossu
       residual <- residual
       lassopen <- pen_l
@@ -137,11 +137,7 @@ CDfriedmanV2 <- function(DATA, Jk, R, LASSO, GROUPLASSO, MaxIter){
   return_varselect$Tmatrix <- Tmat
   return_varselect$Loss <- Loss
   return_varselect$Lossvec <- Lossvec
-  #return_varselect$residual <- residual
-  #return_varselect$lassopen <- lassopen
-  #return_varselect$glassopen <- Glassopen
-  #return_varselect$iter <- iter - 1
+
   return(return_varselect)
-  
-  
+
 }
