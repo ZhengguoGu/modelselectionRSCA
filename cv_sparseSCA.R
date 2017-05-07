@@ -59,6 +59,7 @@ cv_sparseSCA <- function(DATA, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSe
         Pout3d <- list()
         Tout3d <- list()
         LOSS <- array()
+
         for (n in 1:NRSTARTS){
           if(method == "datablock"){
             VarSelectResult <- CDfriedmanV1(DATArm, Jk, R, LassoSequence[l], GLassoSequence[g], MaxIter)
@@ -111,6 +112,7 @@ cv_sparseSCA <- function(DATA, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSe
   #re-run the analysis with optimum Lasso and Group Lasso
   Pout3dopt <- list()
   LOSSopt <- array()
+  
   for (n in 1:NRSTARTS){
     if(method == "datablock"){
       VarSelectResultOpt <- CDfriedmanV1(DATA, Jk, R, OptimumLasso, OptimumGLasso, MaxIter)
