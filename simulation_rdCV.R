@@ -1,11 +1,13 @@
 # this is to test repeated double cross validation
-library(foreach)
-library(psychometric)
-library(doSNOW)
-library(doRNG)
-
 
 set.seed(112)
+
+LassoSequence = seq(.01, 3, by = 0.01)
+GLassoSequence = seq(.01, 3, by = 0.01)
+
+n_rep = 100
+n_seg = 4
+nfolds = 4
 
 I <- 28
 J1 <- 144
@@ -66,11 +68,11 @@ NoiseVSgenerate <- SSNoiseNew/SSXgenerate
 
 
 result <- rdCV_RSCA(DATA=Xgenerate, Jk=Jk, R=R, 
-                    LassoSequence = seq(.01, 2, by = 0.1), 
-                    GLassoSequence = seq(.5, 2, by = 0.1), 
-                    n_rep = 5, n_seg = 3, 
+                    LassoSequence = LassoSequence, 
+                    GLassoSequence = GLassoSequence, 
+                    n_rep = n_rep, n_seg = n_seg, 
                     MaxIter = MAXITER, NRSTARTS = NRSTARTS, 
-                    nfolds = 5)
+                    nfolds = nfolds)
 
 
 #####################################
