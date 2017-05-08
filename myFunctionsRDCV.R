@@ -320,11 +320,25 @@ rdCV_RSCA <- function(DATA, Jk, R, LassoSequence, GLassoSequence, n_rep, n_seg, 
   r = 1
   while(r <= n_rep){
     
-    randindex <- runif(nsub, 0, 1)
+    min_person <- 0  # this, together with the following while(min_person=0), is to ensure that
+                     # the # of subject in testset > # of components. !!! important
+    while(min_person == 0){
+      randindex <- runif(nsub, 0, 1)
+      for(i in 1:n_seg){
+        testset_index <- ((i - 1) * perc_test < randindex) & (randindex < i * perc_test)
+        if(sum(testset_index) >= R){
+          min_person <- 1
+        } else{
+          min_person <- 0
+          break
+        }
+      }
+    }
+    
     perc_test <- 1/n_seg
     
     e_hat <- list()
-    
+    a_list <- list()
     for(i in 1:n_seg){
       testset_index <- ((i - 1) * perc_test < randindex) & (randindex < i * perc_test)
       testset <- DATA[testset_index, ]
@@ -334,7 +348,9 @@ rdCV_RSCA <- function(DATA, Jk, R, LassoSequence, GLassoSequence, n_rep, n_seg, 
       OptimumLasso[r, i] <- results_innerloop$OptimumLasso
       OptimumGLasso[r, i] <- results_innerloop$OptimumGLasso
       estimatedP <- results_innerloop$PoutFinal
-      A <- t(estimatedP) %*% t(testset)    
+      A <- t(estimatedP) %*% t(testset) 
+      print(A)
+      print("   ")
       SVD_DATA <- svd(A, R, R)
       estimatedT <- SVD_DATA$v %*% t(SVD_DATA$u)
       
@@ -349,6 +365,7 @@ rdCV_RSCA <- function(DATA, Jk, R, LassoSequence, GLassoSequence, n_rep, n_seg, 
   results$Lasso <- OptimumLasso
   results$GLasso <- OptimumGLasso
   results$e_hat <- E_hat
+  results$A <- A
   return(results)
 
 }
