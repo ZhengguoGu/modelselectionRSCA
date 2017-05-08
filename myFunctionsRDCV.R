@@ -312,10 +312,11 @@ rdCV_RSCA <- function(DATA, Jk, R, LassoSequence, GLassoSequence, n_rep, n_seg, 
   DATA <- data.matrix(DATA)
   nsub <- dim(DATA)[1]
   
-  
   E_hat <- list()
   OptimumLasso <- matrix(NA, n_rep, n_seg)
   OptimumGLasso <- matrix(NA, n_rep, n_seg)
+  
+  perc_test <- 1/n_seg
   
   r = 1
   while(r <= n_rep){
@@ -334,8 +335,6 @@ rdCV_RSCA <- function(DATA, Jk, R, LassoSequence, GLassoSequence, n_rep, n_seg, 
         }
       }
     }
-    
-    perc_test <- 1/n_seg
     
     e_hat <- list()
     a_list <- list()
