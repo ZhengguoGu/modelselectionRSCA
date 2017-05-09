@@ -320,12 +320,17 @@ rdCV_RSCA <- function(DATA, Jk, R, LassoSequence, GLassoSequence, n_rep, n_seg, 
   r = 1
   while(r <= n_rep){
     
+    cat(sprintf("\n Repetition: %s", r))
+    
     randindex <- runif(nsub, 0, 1)
     perc_test <- 1/n_seg
     
     e_hat <- list()
     
     for(i in 1:n_seg){
+      
+      cat(sprintf("\n Outer loop: %s", i))
+      
       testset_index <- ((i - 1) * perc_test < randindex) & (randindex < i * perc_test)
       testset <- DATA[testset_index, ]
       calibset <- DATA[!testset_index, ]
