@@ -185,7 +185,11 @@ cv_sparseSCA <- function(DATA, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSe
   
   for (g in 1: length(GLassoSequence)){
     
+    cat(sprintf("\n GLassoSequence: %s", GLassoSequence[g]))
+    
     for (l in 1:length(LassoSequence)){
+      
+      cat(sprintf("\n LassoSequence: %s", LassoSequence[l]))
       
       if(method == "datablock"){
         Forvarselected <- CDfriedmanV1(DATA, Jk, R, LassoSequence[l], GLassoSequence[g], MaxIter)
@@ -196,6 +200,9 @@ cv_sparseSCA <- function(DATA, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSe
       
       error_x <- array()
       for (i in 1:nfolds){
+        
+        cat(sprintf("\n Inner loop: %s", i))
+        
         ToRemove <- ((i - 1) * percentRemove < randmat) & (randmat < i * percentRemove) # this idea is from PMA package
         DATArm <- DATA
         DATArm[ToRemove] <- NA
