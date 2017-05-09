@@ -2,12 +2,12 @@
 
 set.seed(112)
 
-LassoSequence = seq(.01, 3, by = 0.01)
-GLassoSequence = seq(.01, 3, by = 0.01)
+LassoSequence = seq(.1, 2, by = 0.1)
+GLassoSequence = seq(.1, 2, by = 0.1)
 
-n_rep = 100
+n_rep = 1
 n_seg = 4
-nfolds = 4
+nfolds = 3
 
 I <- 28
 J1 <- 144
@@ -20,8 +20,8 @@ R <- 5
 PropNoise <- 0.05
 Perc0 <- 0.3
 
-NRSTARTS <- 20
-Ndataset <- 50
+NRSTARTS <- 1
+Ndataset <- 5
 MAXITER <- 400
 
 DATA1 <- matrix(rnorm(I*J1, mean = 0, sd = 1), I, J1)
@@ -77,8 +77,8 @@ result <- rdCV_RSCA(DATA=Xgenerate, Jk=Jk, R=R,
 
 #####################################
 
-OptimumLasso <- .11
-OptimumGLasso <- .5
+OptimumLasso <- .2
+OptimumGLasso <- .2
 method <- "component"
 Pout3dopt <- list()
 Tout3dopt <- list()
