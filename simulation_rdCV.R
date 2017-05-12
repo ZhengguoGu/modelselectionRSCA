@@ -2,12 +2,12 @@
 
 set.seed(112)
 
-LassoSequence = seq(.1, 2, by = 0.1)
-GLassoSequence = seq(.1, 2, by = 0.1)
+LassoSequence = seq(.1, 2, by = 0.05)
+GLassoSequence = seq(.1, 2, by = 0.05)
 
-n_rep = 1
+n_rep = 10
 n_seg = 4
-nfolds = 3
+nfolds = 7
 
 I <- 28
 J1 <- 144
@@ -20,8 +20,8 @@ R <- 5
 PropNoise <- 0.05
 Perc0 <- 0.3
 
-NRSTARTS <- 1
-Ndataset <- 5
+NRSTARTS <- 5
+Ndataset <- 10
 MAXITER <- 400
 
 DATA1 <- matrix(rnorm(I*J1, mean = 0, sd = 1), I, J1)
