@@ -150,7 +150,8 @@ BIC_SCA <- function (DATA, Jk, R, LASSO, GROUPLASSO, MaxIter, NRSTARTS)
   
   Res_mat <- DATA - Tout3d[[k]] %*% t(Pout3d[[k]])
   variance_sparse <- sum((apply(Res_mat, 2, var)) * (n_sub-1)/n_sub)  #empirical variance = population variance
-  
+  print("sparse:")
+  print(variance_sparse)
   
   VarSelectResult0 <- CDfriedmanV2(DATA, Jk, R, LASSO=0, 
                                   GROUPLASSO=0, MaxIter)
@@ -158,8 +159,10 @@ BIC_SCA <- function (DATA, Jk, R, LASSO, GROUPLASSO, MaxIter, NRSTARTS)
   Pmat0 <- VarSelectResult0$Pmatrix
   Res_mat0 <- DATA - Tmat0 %*% t(Pmat0)
   variance_0 <- sum((apply(Res_mat0, 2, var)) * (n_sub-1)/n_sub)  #empirical variance = population variance
+  print("null")
+  print(variance_0)
   
-  bic <- variance_sparse/VarSelectResult0 + sum(Pout3d[[k]]!=0) * ln(n_sub)/n_sub
+  bic <- variance_sparse/variance_0 + sum(Pout3d[[k]]!=0) * log(n_sub)/n_sub
   
     
   return_varselect <- list()
@@ -172,3 +175,20 @@ BIC_SCA <- function (DATA, Jk, R, LASSO, GROUPLASSO, MaxIter, NRSTARTS)
   return(return_varselect)
 }
 
+############ 3. soft thresholding  ######################
+
+## function soft-thresholding
+
+soft_th <- function(X, lambda){
+  
+  # assume X is a matrix
+  result <- X
+  index1 <- which(X > lambda)
+  result[index1] <- X[index1] - lambda
+  index2 <- which(X < -lambda)
+  result[index2] <- X[index2] + lambda
+  index0 <- which(X <= lambda & X >= -lambda)
+  result[index0] <- 0
+  
+  return(result)
+}
