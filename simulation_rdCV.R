@@ -21,7 +21,7 @@ PropNoise <- 0.05
 Perc0 <- 0.3
 
 NRSTARTS <- 5
-Ndataset <- 10
+#Ndataset <- 10
 MAXITER <- 400
 
 DATA1 <- matrix(rnorm(I*J1, mean = 0, sd = 1), I, J1)
