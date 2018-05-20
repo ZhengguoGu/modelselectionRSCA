@@ -11,6 +11,8 @@
 # NRSTARTS: Number of multistarts
 BolassoCV <- function(DATA, Jk, R, LassoSequence, GlassoSequence, W, NRSTARTS){
   
+  DATA <- data.matrix(DATA)
+  
   n_persons <- nrow(DATA)
   
   person_index <- sample(1:n_persons, n_persons, replace = TRUE)
