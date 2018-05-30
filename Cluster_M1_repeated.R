@@ -70,7 +70,10 @@ while(r <= n_rep){
   r <- r + 1
 }
 
-results <- list()
-results$Lasso <- OptimumLasso
-results$GLasso <- OptimumGLasso
-results$e_hat <- E_hat
+#results <- list()
+#results$Lasso <- OptimumLasso
+#results$GLasso <- OptimumGLasso
+#results$e_hat <- E_hat
+
+table(OptimumLasso)
+table(OptimumGLasso)
