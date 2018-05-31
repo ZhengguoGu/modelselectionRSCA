@@ -15,6 +15,17 @@ DATA <- read.table(file="data.dat", header = T, sep = "\t")
 DATA <- data.matrix(DATA)
 nsub <- dim(DATA)[1]
 
+
+Jk =
+R = 
+MaxIter = 400
+NRSTARTS = 2
+LassoSequence = 
+GLassoSequence = 
+nfolds = 7
+
+################################ Repeated Double CV ###########################################
+
 E_hat <- list()
 OptimumLasso <- matrix(NA, n_rep, n_seg)
 OptimumGLasso <- matrix(NA, n_rep, n_seg)
