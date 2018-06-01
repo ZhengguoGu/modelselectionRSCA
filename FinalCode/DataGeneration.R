@@ -56,9 +56,8 @@ NoiseVSgenerate <- SSNoiseNew/SSXgenerate
 ##### Data preprocessing ###################
 library(RegularizedSCA)
 Data_1 <- RegularizedSCA::pre_process(Xgenerate[, 1:J1], weight = T)
-Data_2 <- RegularizedSCA::pre_process(Xgenerate[, (J1+1):J2], weight = T)
+Data_2 <- RegularizedSCA::pre_process(Xgenerate[, (J1+1):(J1+J2)], weight = T)
 Data_final <- cbind(Data_1, Data_2)
 
-write.table(Data_final, file="data.dat", row.names=FALSE, sep="\t", quote=FALSE)
+save(Data_final, Jk, R, file="data.RData")
 
-trial <- read.table(file="data.dat", header = T, sep = "\t")
