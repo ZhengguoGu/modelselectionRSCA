@@ -41,11 +41,11 @@ for(i in 1:length(LassoSequence)){
     T_hat <- VarSelect$Tmatrix
     V_tilde <- matrix_var(DATA - T_hat %*% t(P_hat))
     
-    BIC_Croux[i, j] <- V_tilde / V_0 + sum(P_hat != 0) * log(n_sub) / n_sub
-    BIC_GUO[i, j] <- V_tilde / error_var + sum(P_hat != 0) * log(n_sub)
+    BIC_Croux[i, j] <- V_tilde / V_0 + sum(P_hat != 0) * log(n_sub) / n_sub  # this is the BIC index prop0sed by Croux et al.
+    BIC_GUO[i, j] <- V_tilde / error_var + sum(P_hat != 0) * log(n_sub)      # this is the BIC index proposed by Guo et al.
      
     V_a <- matrix_var(T_hat %*% t(P_hat))  # this is for IS
-    IS[i, j] <- V_a * V_s / V_oo^2 * sum(P_hat == 0) /(sum(Jk) * R)
+    IS[i, j] <- V_a * V_s / V_oo^2 * sum(P_hat == 0) /(sum(Jk) * R)          # this is index of sparseness
   
 }
 
