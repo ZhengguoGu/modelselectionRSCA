@@ -1,4 +1,4 @@
-####### parameters ###############
+####### parameters #####################################################################
 # DATA: concatenated data matrix
 # Jk: number of variables (a vector, the elements of which correspond to the datablocks)
 # R: number of components
@@ -6,9 +6,8 @@
 # GLassoSequence: A sequence of Group Lasso tuning parameters
 # n_rep: number of repetitions
 # n_seg: number of segments
-# MaxIter: maximum number of iterations
-# NRSTARTS: number of multi-starts
-# nfolds: number of folds for CV
+#######################################################################################
+
 
 DATA <- read.table(file="data.dat", header = T, sep = "\t")
 
@@ -18,11 +17,9 @@ nsub <- dim(DATA)[1]
 
 Jk =
 R = 
-MaxIter = 400
-NRSTARTS = 2
 LassoSequence = 
 GLassoSequence = 
-nfolds = 7
+
 
 ################################ Repeated Double CV ###########################################
 
@@ -65,7 +62,7 @@ while(r <= n_rep){
     testset <- DATA[testset_index, ]
     calibset <- DATA[!testset_index, ]
     
-    results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSequence, nfolds, method = "component")
+    results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = 2, LassoSequence, GLassoSequence, nfolds = 10, method = "component")
     OptimumLasso[r, i] <- results_innerloop$RecommendedLambda[1]
     OptimumGLasso[r, i] <- results_innerloop$RecommendedLambda[2]
     estimatedP <- results_innerloop$P_hat

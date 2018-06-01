@@ -1,11 +1,10 @@
-####### parameters ###############
+####### parameters ########################################################################
 # DATA: concatenated data matrix
 # Jk: number of variables (a vector, the elements of which correspond to the datablocks)
 # R: number of components
 # LassoSequence: A sequence of Lasso tuning parameters
 # GLassoSequence: A sequence of Group Lasso tuning parameters
-# MaxIter: maximum number of iterations
-# NRSTARTS: number of multi-starts
+###########################################################################################
 
 load() functions
 DATA <- data.matrix(DATA)
@@ -15,12 +14,10 @@ R =
 LassoSequence = 
 GLassoSequence = 
 
-MaxIter = 400
-NRSTARTS = 2
 
 
 
-VarSelect0 <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = 0, GROUPLASSO = 0, MaxIter, NRSTARTS, method = "component")
+VarSelect0 <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = 0, GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 20, method = "component")
 P_hat0 <- VarSelect0$Pmatrix
 T_hat0 <- VarSelect0$Tmatrix
 
@@ -36,7 +33,7 @@ IS <- matrix(NA, length(LassoSequence), length(GLassoSequence))
 for(i in 1:length(LassoSequence)){
   for(j in 1:length(GLassoSequence))
     
-    VarSelect <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = LassoSequence[i], GROUPLASSO = GLassoSequence[j], MaxIter, NRSTARTS, method = "component")
+    VarSelect <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = LassoSequence[i], GROUPLASSO = GLassoSequence[j], MaxIter = 400, NRSTARTS = 2, method = "component")
     P_hat <- VarSelect$Pmatrix
     T_hat <- VarSelect$Tmatrix
     V_tilde <- matrix_var(DATA - T_hat %*% t(P_hat))
