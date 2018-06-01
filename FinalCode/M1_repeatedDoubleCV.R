@@ -8,6 +8,7 @@
 # n_seg: number of segments
 #######################################################################################
 
+set.seed(112)
 
 DATA <- read.table(file="data.dat", header = T, sep = "\t")
 

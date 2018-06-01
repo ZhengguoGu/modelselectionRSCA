@@ -6,15 +6,16 @@
 # GLassoSequence: A sequence of Group Lasso tuning parameters
 ###########################################################################################
 
-load() functions
+load("Functions.R")  #load functions
+set.seed(112)
+
+
 DATA <- data.matrix(DATA)
 n_sub <- dim(DATA)[1]
 Jk =
 R = 
 LassoSequence = 
 GLassoSequence = 
-
-
 
 
 VarSelect0 <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = 0, GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 20, method = "component")

@@ -9,8 +9,9 @@
 # GlassoSequence: A vector of Group Lasso tuning parameter values in accending order
 
 
+set.seed(112)
+load("Functions.R")  #load functions
 
- 
   
 DATA <- data.matrix(DATA)  #DATA should be pre-processed at this stage
   
