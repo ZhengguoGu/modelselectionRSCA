@@ -9,19 +9,16 @@
 #######################################################################################
 
 set.seed(112)
+library(RegularizedSCA)
 
-DATA <- read.table(file="data.dat", header = T, sep = "\t")
-
-DATA <- data.matrix(DATA)
+DATA <- data.matrix(Data_final)
 nsub <- dim(DATA)[1]
 
+LassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 50)
+GLassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 50)
 
-Jk =
-R = 
-LassoSequence = 
-GLassoSequence = 
-
-
+n_rep <- 10
+n_seg <- 3
 ################################ Repeated Double CV ###########################################
 
 E_hat <- list()
