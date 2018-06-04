@@ -75,7 +75,7 @@ sim_result <- foreach(r = 1:n_rep, .combine='cbind') %dorng% {
     
     }
     
-    final_sim <- list(Lasso = OptimumLasso, Glasso = OptimumGLasso)
+    final_sim <- c(OptimumLasso, OptimumGLasso)
   
     #final_sim[[3]] <- e_hat
     return(final_sim)
