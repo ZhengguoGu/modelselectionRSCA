@@ -53,6 +53,6 @@ for(i in 1:length(LassoSequence)){
 }
 
 
-
+save(BIC_Croux, BIC_Guo, IS, file = "BIC_IS.RData")
 
 

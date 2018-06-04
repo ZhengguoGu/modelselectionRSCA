@@ -10,18 +10,19 @@
 
 
 set.seed(112)
+library(RegularizedSCA)
 load("Functions.R")  #load functions
 
   
-DATA <- data.matrix(DATA)  #DATA should be pre-processed at this stage
+DATA <- data.matrix(Data_final)  #DATA should be pre-processed at this stage
   
-Jk = 
-R = 
-LassoSequence = 
-GlassoSequence =
+#Jk = c(144,44)
+#R = 5
+LassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 50)
+GLassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 50)
+m = 10
   
 n_persons <- nrow(DATA)
-
 person_index <- sample(1:n_persons, n_persons, replace = TRUE)
 Data_sample <- DATA[person_index, ]
 result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = 2, LassoSequence, GLassoSequence, nfolds = 10, method = "component")  
