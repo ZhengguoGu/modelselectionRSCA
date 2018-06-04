@@ -10,7 +10,11 @@
 
 
 set.seed(112)
+library(foreach)
+library(doSNOW)
+library(doRNG)
 library(RegularizedSCA)
+
 load("Functions.R")  #load functions
 
   
@@ -18,8 +22,8 @@ DATA <- data.matrix(Data_final)  #DATA should be pre-processed at this stage
   
 #Jk = c(144,44)
 #R = 5
-LassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 50)
-GLassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 50)
+LassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 5)
+GLassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 5)
 m = 10
   
 n_persons <- nrow(DATA)
@@ -33,9 +37,11 @@ P_indexset <- result$P_hat
 P_indexset[which(P_indexset!=0)] <- 1  #non-zero loadings are marked as 1
   
 #resampling
-i <- 1
-while(i < m){
-    
+cl <- makeCluster(2)
+registerDoSNOW(cl)
+#note that set.seed() and %dorng% ensure that parallel computing generates reproducable results.
+sim_result <- foreach(i = 1:m, .combine='+') %dorng% {
+
   person_index <- sample(1:n_persons, n_persons, replace = TRUE)
   Data_sample <- DATA[person_index, ]
   result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = 2, LassoSequence, GLassoSequence, nfolds = 10, method = "component")
@@ -43,10 +49,14 @@ while(i < m){
   perm <- RegularizedSCA::TuckerCoef(T_target, T_result)$perm
   P_result <- result$P_hat[, perm]
   P_result[which(P_result!=0)] <- 1
-  P_indexset <- P_indexset + P_result
-
-i <- i + 1    
+  
+  return(P_result)
+  
 }
+stopCluster(cl)
+
+P_indexset <- sim_result + P_indexset
+
   
 # Reestimate P and T, with 20 starts
 Pout3d <- list()
