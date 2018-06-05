@@ -40,7 +40,7 @@ P_indexset[which(P_indexset!=0)] <- 1  #non-zero loadings are marked as 1
 cl <- makeCluster(2)
 registerDoSNOW(cl)
 #note that set.seed() and %dorng% ensure that parallel computing generates reproducable results.
-sim_result <- foreach(i = 1:m, .combine='+') %dorng% {
+sim_result <- foreach(i = 1:(m-1), .combine='+') %dorng% {
 
   person_index <- sample(1:n_persons, n_persons, replace = TRUE)
   Data_sample <- DATA[person_index, ]
@@ -57,6 +57,7 @@ stopCluster(cl)
 
 P_indexset <- sim_result + P_indexset
 
+P_indexset[which(P_indexset) != m] <- 0  #Variables that have not been selected m times are left to be zero
   
 # Reestimate P and T, with 20 starts
 Pout3d <- list()
