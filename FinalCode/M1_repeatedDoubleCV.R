@@ -9,7 +9,7 @@
 # N_cores: number of cores (for parallel computing)
 #######################################################################################
 
-M1_repeatedDoubleCV <- function(DATA, N_cores, Lasso_length, GLasso_length, n_rep, n_seg){
+M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg){
   library(RegularizedSCA)
   library(foreach)
   library(snow)
@@ -40,10 +40,7 @@ M1_repeatedDoubleCV <- function(DATA, N_cores, Lasso_length, GLasso_length, n_re
   DATA <- data.matrix(DATA)
   nsub <- dim(DATA)[1]
 
-  LassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = Lasso_length)
-  GLassoSequence = seq(.00001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = GLasso_length)
-
-
+ 
 ################################ Repeated Double CV ###########################################
 
 
