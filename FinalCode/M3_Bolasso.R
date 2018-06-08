@@ -7,9 +7,9 @@
 # R: The number of components (R>=2)
 # LassoSequence: A vector of lasso tuning parameter values in accending order
 # GlassoSequence: A vector of Group Lasso tuning parameter values in accending order
+# N_cores: Number of cores for parallel computing
 
-
-Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence){
+Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_cores){
   
   library(foreach)
   library(doSNOW)
@@ -29,10 +29,10 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence){
   P_indexset[which(P_indexset!=0)] <- 1  #non-zero loadings are marked as 1
   
   #resampling
-  cl <- makeCluster(2)
-  registerDoSNOW(cl)
+  cl <- snow::makeCluster(N_cores)
+  doSNOW::registerDoSNOW(cl)
   #note that set.seed() and %dorng% ensure that parallel computing generates reproducable results.
-  sim_result <- foreach(i = 1:(N_boots-1), .combine='+') %dorng% {
+  sim_result <- foreach::foreach(i = 1:(N_boots-1), .combine='+') %dorng% {
     
     person_index <- sample(1:n_persons, n_persons, replace = TRUE)
     Data_sample <- DATA[person_index, ]
@@ -45,7 +45,7 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence){
     return(P_result)
     
   }
-  stopCluster(cl)
+  SNOW::stopCluster(cl)
   
   P_indexset <- sim_result + P_indexset
   
