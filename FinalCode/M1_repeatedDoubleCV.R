@@ -37,6 +37,15 @@ M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n
   }
  
   
+  if(missing(LassoSequence)){
+    LassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 20)
+  }
+  
+  if(missing(GLassoSequence)){
+    GLassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 20)
+  }
+  
+  
   DATA <- data.matrix(DATA)
   nsub <- dim(DATA)[1]
 
@@ -97,7 +106,7 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
     return(final_sim)
 }
 
-SNOW::stopCluster(cl)
+snow::stopCluster(cl)
 
 #results <- list()
 #results$Lasso <- OptimumLasso

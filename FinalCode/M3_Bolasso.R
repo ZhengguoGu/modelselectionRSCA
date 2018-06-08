@@ -16,7 +16,15 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
   library(doRNG)
   library(RegularizedSCA)
   
-  DATA <- data.matrix(Data_final)  #DATA should be pre-processed at this stage
+  DATA <- data.matrix(DATA)  #DATA should be pre-processed at this stage
+  
+  if(missing(LassoSequence)){
+    LassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 20)
+  }
+  
+  if(missing(GLassoSequence)){
+    GLassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 20)
+  }
   
   n_persons <- nrow(DATA)
   person_index <- sample(1:n_persons, n_persons, replace = TRUE)
@@ -45,7 +53,7 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
     return(P_result)
     
   }
-  SNOW::stopCluster(cl)
+  snow::stopCluster(cl)
   
   P_indexset <- sim_result + P_indexset
   

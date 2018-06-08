@@ -40,7 +40,7 @@ StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
     Tmat <- SVD_DATA$u
     
     residual <- sum((DATA - Tmat %*% Pt)^2)
-    Lossu <- residual + pen1
+    Lossu <- residual 
     
     P <- t(DATA) %*% Tmat
     P[P_indexset == 0] <- 0
