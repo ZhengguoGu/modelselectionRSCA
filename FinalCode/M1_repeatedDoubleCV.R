@@ -87,7 +87,7 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
       testset <- DATA[testset_index, ]
       calibset <- DATA[!testset_index, ]
     
-      results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = 2, LassoSequence, GLassoSequence, nfolds = 10, method = "component")
+      results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = 5, LassoSequence, GLassoSequence, nfolds = 10, method = "component")
       OptimumLasso[i] <- results_innerloop$RecommendedLambda[1]
       OptimumGLasso[i] <- results_innerloop$RecommendedLambda[2]
       estimatedP <- results_innerloop$P_hat
@@ -100,7 +100,7 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
     
     }
     
-    final_sim <- c(OptimumLasso, OptimumGLasso)
+    final_sim <- cbind(OptimumLasso, OptimumGLasso)
   
     #final_sim[[3]] <- e_hat
     return(final_sim)
@@ -113,6 +113,6 @@ snow::stopCluster(cl)
 #results$GLasso <- OptimumGLasso
 #results$e_hat <- E_hat
 
-return_tables <- list(Lasso = table(OptimumLasso), Group Lasso = table(OptimumGLasso))
+return_tables <- list(Lasso = table(OptimumLasso), GroupLasso = table(OptimumGLasso))
 return(return_tables)
 }
