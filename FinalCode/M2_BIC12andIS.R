@@ -14,6 +14,14 @@ M2_BIC_IS <- function(DATA, Jk, R, LassoSequence, GLassoSequence){
   DATA <- data.matrix(Data_final)
   n_sub <- dim(DATA)[1]
   
+  if(missing(LassoSequence)){
+    LassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 20)
+  }
+  
+  if(missing(GLassoSequence)){
+    GLassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 20)
+  }
+  
   VarSelect0 <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = 0, GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 20, method = "component")
   P_hat0 <- VarSelect0$Pmatrix
   T_hat0 <- VarSelect0$Tmatrix
