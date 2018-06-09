@@ -20,14 +20,6 @@ M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n
     N_cores = 2
   }
   
-  if(missing(Lasso_length)){
-    Lasso_length = 50
-  }
-  
-  if(missing(GLasso_length)){
-    GLasso_length =50
-  }
-
   if(missing(n_rep)){
     n_rep <- 2
   }
