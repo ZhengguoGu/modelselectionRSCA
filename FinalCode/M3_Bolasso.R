@@ -11,10 +11,10 @@
 
 Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_cores, NRSTARTS){
   
-  library(foreach)
-  library(doSNOW)
-  library(doRNG)
-  library(RegularizedSCA)
+  #library(foreach)
+  #library(doSNOW)
+  #library(doRNG)
+  #library(RegularizedSCA)
   
   DATA <- data.matrix(DATA)  #DATA should be pre-processed at this stage
   

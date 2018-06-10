@@ -6,9 +6,6 @@
 # GLassoSequence: A sequence of Group Lasso tuning parameters
 ###########################################################################################
 
-load("Functions.R")  #load functions
-load("data.RData")
-
 M2_BIC_IS <- function(DATA, Jk, R, LassoSequence, GLassoSequence, NRSTARTS){
   
   DATA <- data.matrix(Data_final)

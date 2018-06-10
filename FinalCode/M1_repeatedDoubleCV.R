@@ -10,11 +10,11 @@
 #######################################################################################
 
 M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg, NRSTARTS){
-  library(RegularizedSCA)
-  library(foreach)
-  library(snow)
-  library(doSNOW)
-  library(doRNG)
+  #library(RegularizedSCA)
+  #library(foreach)
+  #library(snow)
+  #library(doSNOW)
+  #library(doRNG)
 
   if(missing(N_cores)){
     N_cores = 1
