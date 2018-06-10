@@ -9,7 +9,7 @@
 # N_cores: number of cores (for parallel computing)
 #######################################################################################
 
-M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg){
+M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg, NRSTARTS){
   library(RegularizedSCA)
   library(foreach)
   library(snow)
@@ -17,11 +17,11 @@ M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n
   library(doRNG)
 
   if(missing(N_cores)){
-    N_cores = 2
+    N_cores = 1
   }
   
   if(missing(n_rep)){
-    n_rep <- 2
+    n_rep <- 10
   }
   
   if(missing(n_seg)){
@@ -30,11 +30,15 @@ M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n
  
   
   if(missing(LassoSequence)){
-    LassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 20)
+    LassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso, length.out = 10)
   }
   
   if(missing(GLassoSequence)){
-    GLassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 20)
+    GLassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 10)
+  }
+  
+  if(missing(NRSTARTS)){
+    NRSTARTS = 1
   }
   
   
@@ -79,7 +83,7 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
       testset <- DATA[testset_index, ]
       calibset <- DATA[!testset_index, ]
     
-      results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = 5, LassoSequence, GLassoSequence, nfolds = 10, method = "component")
+      results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = NRSTARTS, LassoSequence, GLassoSequence, nfolds = 10, method = "component")
       OptimumLasso[i] <- results_innerloop$RecommendedLambda[1]
       OptimumGLasso[i] <- results_innerloop$RecommendedLambda[2]
       estimatedP <- results_innerloop$P_hat
@@ -105,6 +109,7 @@ snow::stopCluster(cl)
 #results$GLasso <- OptimumGLasso
 #results$e_hat <- E_hat
 
-return_tables <- list(Lasso = table(OptimumLasso), GroupLasso = table(OptimumGLasso))
+return_tables <- list(Lasso = table(sim_result[, colnames(sim_result) == "OptimumLasso"]), 
+                      GroupLasso = table(sim_result[, colnames(sim_result) == "OptimumGLasso"]))
 return(return_tables)
 }

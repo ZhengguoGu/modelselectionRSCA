@@ -9,7 +9,7 @@
 # GlassoSequence: A vector of Group Lasso tuning parameter values in accending order
 # N_cores: Number of cores for parallel computing
 
-Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_cores){
+Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_cores, NRSTARTS){
   
   library(foreach)
   library(doSNOW)
@@ -26,10 +26,14 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
     GLassoSequence = seq(0.001, RegularizedSCA::maxLGlasso(DATA, Jk, R)$Glasso, length.out = 20)
   }
   
+  if(missing(NRSTARTS)){
+    NRSTARTS = 1
+  }
+  
   n_persons <- nrow(DATA)
   person_index <- sample(1:n_persons, n_persons, replace = TRUE)
   Data_sample <- DATA[person_index, ]
-  result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = 5, LassoSequence, GLassoSequence, nfolds = 10, method = "component")  
+  result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = NRSTARTS, LassoSequence, GLassoSequence, nfolds = 10, method = "component")  
   T_target <- result$T_hat                #We fix the estimated T matrix from the first resampled data.
   #All the estimated T matrix are to be compared to this estimated T.       
   #(This is due to permutation freedom)
