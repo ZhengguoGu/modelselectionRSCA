@@ -1,9 +1,3 @@
-#### change the following two parameters manually  ######
-PropNoise <- 0.05
-Perc0 <- 0.3
-#########################################################
-
-
 Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
 
   if(missing(I)){
@@ -64,15 +58,15 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
   SSNoise <- sum(Noise ^ 2)
   g <- sqrt(PropNoise*SSXtrue/(SSNoise-PropNoise*SSNoise))
   NoiseNew <- g*Noise
-  SSNoiseNew <- sum(NoiseNew ^ 2)
+  #SSNoiseNew <- sum(NoiseNew ^ 2)
   Xgenerate <- XTrue + NoiseNew
-  SSXgenerate <- sum(Xgenerate ^ 2)
-  NoiseVSgenerate <- SSNoiseNew/SSXgenerate
+  #SSXgenerate <- sum(Xgenerate ^ 2)
+  #NoiseVSgenerate <- SSNoiseNew/SSXgenerate
 
   if(pre_pro == "Yes"){
   
   ##### Data preprocessing ###################
-    library(RegularizedSCA)
+    #library(RegularizedSCA)
     Data_1 <- RegularizedSCA::pre_process(Xgenerate[, 1:J1], weight = T)
     Data_2 <- RegularizedSCA::pre_process(Xgenerate[, (J1+1):(J1+J2)], weight = T)
     Data_final <- cbind(Data_1, Data_2)

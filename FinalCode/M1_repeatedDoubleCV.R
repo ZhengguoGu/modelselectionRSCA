@@ -9,7 +9,7 @@
 # N_cores: number of cores (for parallel computing)
 #######################################################################################
 
-M1_repeatedDoubleCV <- function(DATA, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg, NRSTARTS){
+M1_repeatedDoubleCV <- function(DATA, R, Jk, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg, NRSTARTS){
   #library(RegularizedSCA)
   #library(foreach)
   #library(snow)
