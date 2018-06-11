@@ -77,7 +77,8 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
   
   }
 
-return(Data_final)
+  Data_final <- list(data = Xgenerate, T_mat = Ttrue, P_mat = PTrueCnew)
+  return(Data_final)
 
 }
 
