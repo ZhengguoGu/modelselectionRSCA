@@ -8,7 +8,7 @@
 
 M2_BIC_IS <- function(DATA, Jk, R, LassoSequence, GLassoSequence, NRSTARTS){
   
-  DATA <- data.matrix(Data_final)
+  DATA <- data.matrix(DATA)
   n_sub <- dim(DATA)[1]
   
   if(missing(LassoSequence)){
