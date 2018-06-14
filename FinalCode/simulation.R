@@ -114,7 +114,7 @@ N_boots = 20
 
 n_dataset <- 1
 N_dataset = 20
-RESULT_BenchmarCV <- matrix(N_dataset, 2)
+RESULT_BenchmarCV <- matrix(NA, N_dataset, 2)
 ESTIMATED_P <- list()
 ESTIMATED_T <- list()
 while(n_dataset <= N_dataset){
