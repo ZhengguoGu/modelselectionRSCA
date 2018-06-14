@@ -100,9 +100,6 @@ num_correct <- function (TargetP, EstimatedP){
 
 
 set.seed(1)
-PropNoise = 0.005
-Perc0 = 0.3
-
 I <- 28
 J1 <- 144
 J2 <- 44
@@ -113,25 +110,35 @@ n_rep = 20
 n_seg = 3
 N_boots = 20
 
-
-my_data_list <- Data_generation(I, J1, J2, R, PropNoise, Perc0, pre_pro = "Yes")
-
-my_data <- my_data_list$data
-my_data_Ptrue <- my_data_list$P_mat
-my_data_Ttrue <- my_data_list$T_mat
-
-Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data, Jk, R)$Lasso, length.out = 50)
-GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data, Jk, R)$Glasso, length.out = 50)
-
 ### 1. benchmark CV
 
-result_sim1_BM <- RegularizedSCA::cv_sparseSCA(my_data, Jk, R, MaxIter = 400, NRSTARTS, Lassosequence, GLassosequence, nfolds = 7, method = "component")
+n_dataset <- 1
+N_dataset = 20
+RESULT_BenchmarCV <- matrix(N_dataset, 2)
+ESTIMATED_PT_CV <- list()
+while(n_dataset <= N_dataset){
+  
+  filename <- paste("Data_", n_dataset, ".RData", sep = "")
+  load(filename)
+  
+  Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(data, Jk, R)$Lasso, length.out = 50)
+  GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(data, Jk, R)$Glasso, length.out = 50)
+ 
+  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(data, Jk, R, MaxIter = 400, NRSTARTS, Lassosequence, GLassosequence, nfolds = 7, method = "component") 
+  RESULT_BenchmarCV[n_dataset, 1] <- RegularizedSCA::TuckerCoef(my_data_Ttrue, result_sim1_BM$T_hat)
+  RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_Ptrue, result_sim1_BM$P_hat[, tuckerresult$perm])  
+  
+  ESTIMATED_PT_CV[[n_dataset]] <- list(P_hat = result_sim1_BM$P_hat, T_hat = result_sim1_BM$T_hat)
+  
+}
 
-result_sim1_BM$P_hat
 
-tuckerresult <- RegularizedSCA::TuckerCoef(my_data_Ttrue, result_sim1_BM$T_hat)
-tuckerresult$tucker_value  #0.9995303
-num_correct(my_data_Ptrue, result_sim1_BM$P_hat[, tuckerresult$perm])  #0.9840426
+
+
+
+
+
+
 
 
 ### 2. repeated Double CV
