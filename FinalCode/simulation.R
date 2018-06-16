@@ -104,7 +104,7 @@ I <- 28
 J1 <- 144
 J2 <- 44
 Jk <- c(J1, J2)
-R <- 5
+R <- 3
 NRSTARTS <- 5
 n_rep = 20
 n_seg = 3
@@ -130,34 +130,59 @@ while(n_dataset <= N_dataset){
   RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult$tucker_value
   RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_BM$P_hat[, tuckerresult$perm])  
   
-  ESTIMATED_P[[n_dataset]] <- list(result_sim1_BM$P_hat)
-  ESTIMATED_T[[n_dataset]] <- list(T_hat = result_sim1_BM$T_hat)
+  ESTIMATED_P[[n_dataset]] <- result_sim1_BM$P_hat
+  ESTIMATED_T[[n_dataset]] <- T_hat = result_sim1_BM$T_hat
   n_dataset <- n_dataset + 1
 }
 
 
-
-
-
+save(RESULT_BenchmarCV, ESTIMATED_P, ESTIMATED_T, file = "BenchmarkCV.RData")
 
 
 
 
 
 ### 2. repeated Double CV
+n_dataset <- 1
+N_dataset = 20
+RESULT_rdCV <- matrix(NA, N_dataset, 2)
+ESTIMATED_PrdCV <- list()
+ESTIMATED_TrdCV <- list()
+
 set.seed(1)
-result_sim1_RDCV <- M1_repeatedDoubleCV(my_data,  R, Jk, N_cores = 12, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
+while(n_dataset <= N_dataset){
+  
+  filename <- paste("Data_", n_dataset, ".RData", sep = "")
+  load(filename)
+  
+  Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Lasso, length.out = 50)
+  GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Glasso, length.out = 50)
+  
+  result_sim1_RDCV <- M1_repeatedDoubleCV(my_data_list$data,  R, Jk, N_cores = 20, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
+  
+  temp_lasso <- as.data.frame(result_sim1_RDCV$Lasso)
+  temp_lasso$Var1 <- sort(as.numeric(levels(temp_lasso$Var1)))
+  LASSO <- max(temp_lasso[temp_lasso[,2] == max(temp_lasso[,2]),1])  #the first max ensures that the largest Lasso value is chosen, in case more than one lasso value is recommended by M1_repeatedDoubleCV
+  temp_glasso <- as.data.frame(result_sim1_RDCV$GroupLasso)
+  temp_glasso$Var1 <- sort(as.numeric(levels(temp_glasso$Var1)))
+  GLASSO <- max(temp_glasso[temp_glasso[,2] == max(temp_glasso[,2]),1])
+  
+  
+  final_RDCV <- RegularizedSCA::sparseSCA(my_data_list$data, Jk, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter = 400,
+                                          NRSTARTS = 20, method = "component")
+  
+  final_RDCV$Pmatrix
+  tuckerresult_RDCV <- RegularizedSCA::TuckerCoef(my_data_Ttrue, final_RDCV$Tmatrix)
+  RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult_RDCV$tucker_value 
+  RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_Ptrue, final_RDCV$Pmatrix[, tuckerresult_RDCV$perm])  
+  
+  ESTIMATED_P[[n_dataset]] <- final_RDCV$Pmatrix
+  ESTIMATED_T[[n_dataset]] <- T_hat = result_sim1_BM$T_hat
+  n_dataset <- n_dataset + 1
+  
+}
 
-result_sim1_RDCV$Lasso  # 0.0747062083396429  the most sparse one was chozen
-result_sim1_RDCV$GroupLasso  #0.0640494874513447
 
-final_RDCV <- RegularizedSCA::sparseSCA(my_data, Jk, R, LASSO = 0.0747062083396429, GROUPLASSO = 0.0640494874513447, MaxIter = 400,
-                                        NRSTARTS = 20, method = "component")
-
-final_RDCV$Pmatrix
-tuckerresult_RDCV <- RegularizedSCA::TuckerCoef(my_data_Ttrue, final_RDCV$Tmatrix)
-tuckerresult_RDCV$tucker_value # 0.9997192
-num_correct(my_data_Ptrue, final_RDCV$Pmatrix[, tuckerresult_RDCV$perm])  # 0.9819149
 
 
 ### 3. BIC and IS
