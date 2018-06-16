@@ -171,13 +171,12 @@ while(n_dataset <= N_dataset){
   final_RDCV <- RegularizedSCA::sparseSCA(my_data_list$data, Jk, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter = 400,
                                           NRSTARTS = 20, method = "component")
   
-  final_RDCV$Pmatrix
-  tuckerresult_RDCV <- RegularizedSCA::TuckerCoef(my_data_Ttrue, final_RDCV$Tmatrix)
-  RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult_RDCV$tucker_value 
-  RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_Ptrue, final_RDCV$Pmatrix[, tuckerresult_RDCV$perm])  
+  tuckerresult_RDCV <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_RDCV$Tmatrix)
+  RESULT_rdCV[n_dataset, 1] <- tuckerresult_RDCV$tucker_value 
+  RESULT_rdCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, final_RDCV$Pmatrix[, tuckerresult_RDCV$perm])  
   
-  ESTIMATED_P[[n_dataset]] <- final_RDCV$Pmatrix
-  ESTIMATED_T[[n_dataset]] <- T_hat = result_sim1_BM$T_hat
+  ESTIMATED_PrdCV[[n_dataset]] <- final_RDCV$Pmatrix
+  ESTIMATED_TrdCV[[n_dataset]] <- T_hat = result_sim1_BM$T_hat
   n_dataset <- n_dataset + 1
   
 }
