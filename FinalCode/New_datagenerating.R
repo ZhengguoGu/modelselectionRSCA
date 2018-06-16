@@ -8,7 +8,8 @@ I <- 28
 J1 <- 144
 J2 <- 44
 Jk <- c(J1, J2)
-R <- 5
+R <- 3
+N_dataset <- 20  #how many datasets to generate
 #NRSTARTS <- 5
 #n_rep = 20
 #n_seg = 3
@@ -18,7 +19,9 @@ R <- 5
 ################################################################################################################################
 # A function for generating data
 ################################################################################################################################
-Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
+Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro, N_dataset){
+  
+  R = 3 # in this simulation, we use R = 3
   
   if(missing(I)){
     I = 28
@@ -32,10 +35,7 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
     J2 = 44
   }
   
-  if(missing(R)){
-    R = 5
-  }
-  
+
   if(missing(pre_pro)){
     pre_pro = "Yes"
   }
@@ -54,22 +54,17 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
   PTrueCBlock1 <- PTrueC[1:J1,]
   PTrueCBlock2 <- PTrueC[(J1+1):(J1+J2),]
   
-  v1 <- c(1, 2, 3)
-  PTrueCBlock1[, v1] <- 0
-  v2 <- c(4, 5)
-  PTrueCBlock2[, v2] <- 0
+  PTrueCBlock1[, 2] <- 0
+  PTrueCBlock2[, 3] <- 0
   
-  PTrueCBlock1_vec <- as.vector(PTrueCBlock1[, v2])
-  v <- sample(1:(J1*2), size = round(Perc0*(J1*2)), replace=F)
-  PTrueCBlock1_vec[v] <- 0
-  PTrueCBlock1[, v2] <- matrix(PTrueCBlock1_vec, nrow = J1, ncol = 2)
-  
-  PTrueCBlock2_vec <- as.vector(PTrueCBlock2[, v1])
-  v <- sample(1:(J2*3), size = round(Perc0*(J2*3)), replace=F)
-  PTrueCBlock2_vec[v] <- 0
-  PTrueCBlock2[, v1] <- matrix(PTrueCBlock2_vec, nrow = J2, ncol = 3)
-  
-  PTrueCnew <- rbind(PTrueCBlock1, PTrueCBlock2)
+  v <- sample(1:J1, size = round(Perc0*J1), replace = F)
+  PTrueCBlock1[, 3][v] <- 0
+  v <- sample(1:J2, size = round(Perc0*J2), replace = F)
+  PTrueCBlock2[, 2][v] <- 0
+  PTrueC_bind <- rbind(PTrueCBlock1, PTrueCBlock2)
+  v <- sample(1:sumJk, size = round(Perc0*sumJk), replace = F)
+  PTrueC_bind[, 1][v] <- 0
+  PTrueCnew <- PTrueC_bind
   
   XTrue <- Ttrue %*% t(PTrueCnew)
   SSXtrue <- sum(XTrue ^ 2)
@@ -104,7 +99,6 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro){
 ###########################################################################################################
 
 k <- 1
-N_dataset <- 20
 while(k <= N_dataset){
   
   my_data_list <- Data_generation(I, J1, J2, R, PropNoise, Perc0, pre_pro = "Yes")
