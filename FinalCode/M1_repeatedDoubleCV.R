@@ -80,17 +80,16 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
     for(i in 1:n_seg){
     
       testset_index <- ((i - 1) * perc_test < randindex) & (randindex < i * perc_test)
-      testset <- DATA[testset_index, ]
+      #testset <- DATA[testset_index, ]
       calibset <- DATA[!testset_index, ]
     
       results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = NRSTARTS, LassoSequence, GLassoSequence, nfolds = 7, method = "component")
       OptimumLasso[i] <- results_innerloop$RecommendedLambda[1]
       OptimumGLasso[i] <- results_innerloop$RecommendedLambda[2]
-      estimatedP <- results_innerloop$P_hat
-      A <- t(estimatedP) %*% t(testset) 
-      
-      SVD_DATA <- svd(A, R, R)
-      estimatedT <- SVD_DATA$v %*% t(SVD_DATA$u)
+      #estimatedP <- results_innerloop$P_hat
+      #A <- t(estimatedP) %*% t(testset) 
+      #SVD_DATA <- svd(A, R, R)
+      #estimatedT <- SVD_DATA$v %*% t(SVD_DATA$u)
     
       #e_hat[i] <- sum((testset - estimatedT %*% t(estimatedP))^2)  
     
