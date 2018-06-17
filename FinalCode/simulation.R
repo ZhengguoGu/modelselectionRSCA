@@ -185,27 +185,52 @@ while(n_dataset <= N_dataset){
 
 
 ### 3. BIC and IS
+n_dataset <- 1
+N_dataset = 20
+RESULT_BIC <- matrix(NA, N_dataset, 2)
+RESULT_IS <- matrix(NA, N_dataset, 2)
+ESTIMATED_Pbic <- list()
+ESTIMATED_Tbic <- list()
+ESTIMATED_PIS <- list()
+ESTIMATED_TIS <- list()
+
 set.seed(1)
-result_sim_BICIS <- M2_BIC_IS(my_data, Jk, R, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS)
+while(n_dataset <= N_dataset){
+  filename <- paste("Data_", n_dataset, ".RData", sep = "")
+  load(filename)
+  
+  Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Lasso, length.out = 50)
+  GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Glasso, length.out = 50)
+  
+  result_sim_BICIS <- M2_BIC_IS(my_data_list$data, Jk, R, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS)
+  
 
-Croux_index <- which(result_sim_BICIS$Croux == min(result_sim_BICIS$Croux), arr.ind = T)
-Lasso_croux <- Lassosequence[Croux_index[1]] #1.568828
-GLasso_croux <- GLassosequence[Croux_index[2]] #1e-07
-final_croux <- RegularizedSCA::sparseSCA(my_data, Jk, R, LASSO = Lasso_croux, GROUPLASSO = GLasso_croux, MaxIter = 400, NRSTARTS = 20, method = "component")
-final_croux$Pmatrix
-tuckerresult_croux <- RegularizedSCA::TuckerCoef(my_data_Ttrue, final_croux$Tmatrix)    
-tuckerresult_croux$tucker_value # #0.9872166
-num_correct(my_data_Ptrue, final_croux$Pmatrix[, tuckerresult_croux$perm])  # 0.8489362
+  Croux_index <- which(result_sim_BICIS$Croux == min(result_sim_BICIS$Croux), arr.ind = T)
+  Lasso_croux <- max(Lassosequence[Croux_index[1]])  #max() is used in case multiple lasso values are chosen. 
+  GLasso_croux <- max(GLassosequence[Croux_index[2]]) 
+  final_croux <- RegularizedSCA::sparseSCA(my_data_list$data, Jk, R, LASSO = Lasso_croux, GROUPLASSO = GLasso_croux, MaxIter = 400, NRSTARTS = 20, method = "component")
+  ESTIMATED_Pbic[[n_dataset]] <- final_croux$Pmatrix
+  ESTIMATED_Tbic[[n_dataset]] <- final_croux$Tmatrix
+  tuckerresult_croux <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_croux$Tmatrix)    
+  RESULT_BIC[n_dataset, 1] <- tuckerresult_croux$tucker_value 
+  RESULT_BIC[n_dataset, 2] <- num_correct(my_data_list$P_mat, final_croux$Pmatrix[, tuckerresult_croux$perm])  
+  
+  
+  IS_index <- which(result_sim_BICIS$IS == max(result_sim_BICIS$IS), arr.ind = T)
+  Lasso_IS <- max(Lassosequence[IS_index[1]])
+  Glasso_IS <- max(GLassosequence[IS_index[2]])
+  final_IS <- RegularizedSCA::sparseSCA(my_data_list$data, Jk, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter = 400, NRSTARTS = 20, method = "component")
+  ESTIMATED_PIS[[n_dataset]] <- final_IS$Pmatrix
+  ESTIMATED_TIS[[n_dataset]] <- final_IS$Tmatrix
+  tuckerresult_IS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_IS$Tmatrix)    
+  RESULT_IS[n_dataset, 1] <- tuckerresult_IS$tucker_value
+  RESULT_IS[n_dataset, 2] <- num_correct(my_data_Ptrue, final_IS$Pmatrix[, tuckerresult_IS$perm])  
+  
+  n_dataset <- n_dataset + 1
+}
 
 
-IS_index <- which(result_sim_BICIS$IS == max(result_sim_BICIS$IS), arr.ind = T)
-Lasso_IS <- Lassosequence[IS_index[1]]  # 0.7470612
-Glasso_IS <- GLassosequence[IS_index[2]]  #1e-07
-final_IS <- RegularizedSCA::sparseSCA(my_data, Jk, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter = 400, NRSTARTS = 20, method = "component")
-final_IS$Pmatrix
-tuckerresult_IS <- RegularizedSCA::TuckerCoef(my_data_Ttrue, final_IS$Tmatrix)    
-tuckerresult_IS$tucker_value # 0.9949985
-num_correct(my_data_Ptrue, final_IS$Pmatrix[, tuckerresult_IS$perm])  #  0.9159574
+
 
 
 ### 4. Bolasso
