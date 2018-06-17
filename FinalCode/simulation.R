@@ -176,7 +176,7 @@ while(n_dataset <= N_dataset){
   RESULT_rdCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, final_RDCV$Pmatrix[, tuckerresult_RDCV$perm])  
   
   ESTIMATED_PrdCV[[n_dataset]] <- final_RDCV$Pmatrix
-  ESTIMATED_TrdCV[[n_dataset]] <- T_hat = result_sim1_BM$T_hat
+  ESTIMATED_TrdCV[[n_dataset]] <- final_RDCV$Tmatrix
   n_dataset <- n_dataset + 1
   
 }
