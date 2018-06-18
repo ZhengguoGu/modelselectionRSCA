@@ -250,7 +250,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim1_Bolasso <- Bolasso_CV(my_data_list$data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS)
+  result_sim1_Bolasso <- Bolasso_CV(my_data_list$data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, N_cores = 20, NRSTARTS)
 
   tuckerresult_Bolasso <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_Bolasso$T_hat)    
   RESULT_BoLasso[n_dataset, 1] <- tuckerresult_Bolasso$tucker_value 
