@@ -181,6 +181,7 @@ while(n_dataset <= N_dataset){
   
 }
 
+save(RESULT_rdCV, ESTIMATED_PrdCV, ESTIMATED_TrdCV, file = "RepeatedDCV.RData")
 
 
 
@@ -224,7 +225,7 @@ while(n_dataset <= N_dataset){
   ESTIMATED_TIS[[n_dataset]] <- final_IS$Tmatrix
   tuckerresult_IS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_IS$Tmatrix)    
   RESULT_IS[n_dataset, 1] <- tuckerresult_IS$tucker_value
-  RESULT_IS[n_dataset, 2] <- num_correct(my_data_Ptrue, final_IS$Pmatrix[, tuckerresult_IS$perm])  
+  RESULT_IS[n_dataset, 2] <- num_correct(my_data_list$P_mat, final_IS$Pmatrix[, tuckerresult_IS$perm])  
   
   n_dataset <- n_dataset + 1
 }
