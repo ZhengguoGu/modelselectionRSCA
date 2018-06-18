@@ -99,7 +99,7 @@ num_correct <- function (TargetP, EstimatedP){
 ##############################################################################################################
 
 
-set.seed(1)
+
 I <- 28
 J1 <- 144
 J2 <- 44
@@ -111,7 +111,7 @@ n_seg = 3
 N_boots = 20
 
 ### 1. benchmark CV
-
+set.seed(1)
 n_dataset <- 1
 N_dataset = 20
 RESULT_BenchmarCV <- matrix(NA, N_dataset, 2)
@@ -230,15 +230,33 @@ while(n_dataset <= N_dataset){
   n_dataset <- n_dataset + 1
 }
 
-
+save(RESULT_BIC, RESULT_IS, ESTIMATED_Pbic, ESTIMATED_Tbic, ESTIMATED_PIS, ESTIMATED_TIS,  file = "BIC_IS.RData")
 
 
 
 ### 4. Bolasso
+n_dataset <- 1
+N_dataset = 20
+RESULT_BoLasso <- matrix(NA, N_dataset, 2)
+ESTIMATED_Pbolasso <- list()
+ESTIMATED_Tbolasso <- list()
+
 set.seed(1)
-result_sim1_Bolasso <- Bolasso_CV(my_data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS)
+while(n_dataset <= N_dataset){
+  
+  filename <- paste("Data_", n_dataset, ".RData", sep = "")
+  load(filename)
+  
+  Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Lasso, length.out = 50)
+  GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(my_data_list$data, Jk, R)$Glasso, length.out = 50)
+  
+  result_sim1_Bolasso <- Bolasso_CV(my_data_list$data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS)
 
-
-tuckerresult_Bolasso <- RegularizedSCA::TuckerCoef(my_data_Ttrue, result_sim1_Bolasso$T_hat)    
-tuckerresult_Bolasso$tucker_value  # 0.8920457
-num_correct(my_data_Ptrue, result_sim1_Bolasso$P_hat[, tuckerresult_Bolasso$perm])
+  tuckerresult_Bolasso <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_Bolasso$T_hat)    
+  RESULT_BoLasso[n_dataset, 1] <- tuckerresult_Bolasso$tucker_value 
+  RESULT_BoLasso[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_Bolasso$P_hat[, tuckerresult_Bolasso$perm])
+  ESTIMATED_Pbolasso[[n_dataset]] <- result_sim1_Bolasso$P_hat
+  ESTIMATED_Tbolasso[[n_dataset]] <- result_sim1_Bolasso$T_hat
+  
+  n_dataset <- n_dataset + 1
+}
