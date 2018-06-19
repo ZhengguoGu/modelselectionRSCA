@@ -131,7 +131,7 @@ while(n_dataset <= N_dataset){
   RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_BM$P_hat[, tuckerresult$perm])  
   
   ESTIMATED_P[[n_dataset]] <- result_sim1_BM$P_hat
-  ESTIMATED_T[[n_dataset]] <- T_hat = result_sim1_BM$T_hat
+  ESTIMATED_T[[n_dataset]] <- result_sim1_BM$T_hat
   n_dataset <- n_dataset + 1
 }
 
