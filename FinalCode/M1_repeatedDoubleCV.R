@@ -90,7 +90,6 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
       #A <- t(estimatedP) %*% t(testset) 
       #SVD_DATA <- svd(A, R, R)
       #estimatedT <- SVD_DATA$v %*% t(SVD_DATA$u)
-    
       #e_hat[i] <- sum((testset - estimatedT %*% t(estimatedP))^2)  
     
     }
