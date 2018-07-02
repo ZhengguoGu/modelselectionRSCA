@@ -107,4 +107,24 @@ colnames(PL) <- c("CV", "RdCV", "BIC", "IS", "BoLasso")
 boxplot(PL, ylab = "Proportion of loadings corrected selected", main = "30% noise and 30% zeros", ylim = c(0,1))
 
 
+# Sim_6 30% noise and 50% zero
+#(note: load data by hand)
+
+tucker_result <- cbind(RESULT_BenchmarCV[,1],
+                       RESULT_rdCV[, 1],
+                       RESULT_BIC[,1],
+                       RESULT_IS[,1],
+                       RESULT_BoLasso[,1])
+colnames(tucker_result) <- c("CV", "RdCV", "BIC", "IS", "BoLasso")
+
+boxplot(tucker_result, ylab = "Tucker congruence", main = "30% noise and 50% zeros", ylim = c(0,1))
+
+PL <- cbind(RESULT_BenchmarCV[,2],
+            RESULT_rdCV[, 2],
+            RESULT_BIC[,2],
+            RESULT_IS[,2],
+            RESULT_BoLasso[,2])
+colnames(PL) <- c("CV", "RdCV", "BIC", "IS", "BoLasso")
+boxplot(PL, ylab = "Proportion of loadings corrected selected", main = "30% noise and 50% zeros", ylim = c(0,1))
+
 
