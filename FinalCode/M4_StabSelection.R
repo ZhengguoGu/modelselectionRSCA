@@ -27,13 +27,11 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
   }
   
   # need a target matrix for T, so that all the estimated T can be compared to it.
-  person_index <- sample(1:n_persons, n_persons/2, replace = F)
-  Data_sample <- DATA[person_index, ]
-  result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = 5, LassoSequence, GLassoSequence=0, nfolds = 7, method = "component")  
+  result <- RegularizedSCA::cv_sparseSCA(DATA, Jk, R, MaxIter = 400, NRSTARTS = 5, LassoSequence, GLassoSequence=0, nfolds = 7, method = "component")  
   T_target <- result$T_hat                #We fix the estimated T matrix. All the estimated P in the following resampling procedure will be rotated 
                                           #after comparing the estimated T with with T_target.
  
-  LassoSequence <- sort(LassoSequence, decreasing = T)
+  LassoSequence <- sort(LassoSequence, decreasing = T) 
   
   P_prob <- list()
   #### this is for P_prob[[1]], which is when used to compare to P_prob[[j]] (j= 2, ...) so as to record the highest probability across all j's (j=1,...)
@@ -46,7 +44,7 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
     Data_sample <- DATA[person_index, ]
     result <- RegularizedSCA::sparseSCA(Data_sample, Jk, R, LASSO = LassoSequence[1], GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 5, method = "component")
     T_result <- result$Tmatrix
-    perm <- RegularizedSCA::TuckerCoef(T_target, T_result)$perm
+    perm <- RegularizedSCA::TuckerCoef(T_target[person_index, ], T_result)$perm
     P_result <- result$Pmatrix[, perm]
     P_result[which(P_result!=0)] <- 1
     
@@ -67,7 +65,7 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
       Data_sample <- DATA[person_index, ]
       result <- RegularizedSCA::sparseSCA(Data_sample, Jk, R, LASSO = LassoSequence[j], GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 5, method = "component")
       T_result <- result$Tmatrix
-      perm <- RegularizedSCA::TuckerCoef(T_target, T_result)$perm
+      perm <- RegularizedSCA::TuckerCoef(T_target[person_index, ], T_result)$perm
       P_result <- result$Pmatrix[, perm]
       P_result[which(P_result!=0)] <- 1
       
