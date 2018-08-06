@@ -82,7 +82,7 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
     P_final[index] <- P_prob[[j]][index]
     
     if(sum(P_prob[[j]] >= Thr) > N_loading){
-       j <- length(LassoSequence)
+       j <- length(LassoSequence)  # just a way to skip the remaining Lasso values, since the total number of non-zero loadings already > N_loading prespecified by the user
     }
     
     j <- j+1
