@@ -261,3 +261,33 @@ while(n_dataset <= N_dataset){
   n_dataset <- n_dataset + 1
 }
 save(RESULT_BoLasso, ESTIMATED_Pbolasso, ESTIMATED_Tbolasso, file = "BOLASSO.RData")
+
+
+### 5. Stability selection
+
+n_dataset <- 1
+N_dataset = 20
+RESULT_StabS <- matrix(NA, N_dataset, 2)
+ESTIMATED_PStabS <- list()
+ESTIMATED_TStabS <- list()
+
+set.seed(1)
+while(n_dataset <= N_dataset){
+  
+  filename <- paste("Data_", n_dataset, ".RData", sep = "")
+  load(filename)
+  
+  n_loading <- sum(my_data_list$P_mat !=0) # note! in reality we dont know the number of non-zero loadings! We just want to see if we know n_loading a priori, can the method generates good results?
+  
+  LassoSequence = exp(seq(from = log(0.00000001), to = log(RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso), length.out = 2500))  #since we use Lasso only
+  result_sim1_StabS <- M4_StabSelection(my_data_list$data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores)
+  
+  tuckerresult_StabS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_StabS$T_hat)    
+  RESULT_StabS[n_dataset, 1] <- tuckerresult_StabS$tucker_value 
+  RESULT_StabS[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_StabS$P_hat[, tuckerresult_Bolasso$perm])
+  ESTIMATED_PStabS[[n_dataset]] <- result_sim1_StabS$P_hat
+  ESTIMATED_TStabS[[n_dataset]] <- result_sim1_StabS$T_hat
+  
+  n_dataset <- n_dataset + 1
+}
+
