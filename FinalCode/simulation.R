@@ -94,7 +94,7 @@ num_correct <- function (TargetP, EstimatedP){
 
 ##############################################################################################################
 ####
-#### Simulations: manually change the parameters: PropNoise and Perc0
+#### Simulations
 ####
 ##############################################################################################################
 
@@ -279,7 +279,7 @@ while(n_dataset <= N_dataset){
   
   n_loading <- sum(my_data_list$P_mat !=0) # note! in reality we dont know the number of non-zero loadings! We just want to see if we know n_loading a priori, can the method generates good results?
   
-  LassoSequence = exp(seq(from = log(0.00000001), to = log(RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso), length.out = 2500))  #since we use Lasso only
+  LassoSequence = exp(seq(from = log(0.00000001), to = log(RegularizedSCA::maxLGlasso(DATA, Jk, R)$Lasso), length.out = 500))  #we use Lasso only
   result_sim1_StabS <- M4_StabSelection(my_data_list$data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores)
   
   tuckerresult_StabS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_StabS$T_hat)    
@@ -290,4 +290,4 @@ while(n_dataset <= N_dataset){
   
   n_dataset <- n_dataset + 1
 }
-
+save(RESULT_StabS, ESTIMATED_PStabS, ESTIMATED_TStabS, file = "Stability.RData")
