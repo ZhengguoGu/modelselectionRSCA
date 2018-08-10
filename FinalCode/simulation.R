@@ -284,7 +284,7 @@ while(n_dataset <= N_dataset){
   
   tuckerresult_StabS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_StabS$T_hat)    
   RESULT_StabS[n_dataset, 1] <- tuckerresult_StabS$tucker_value 
-  RESULT_StabS[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_StabS$P_hat[, tuckerresult_Bolasso$perm])
+  RESULT_StabS[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_StabS$P_hat[, tuckerresult_StabS$perm])
   ESTIMATED_PStabS[[n_dataset]] <- result_sim1_StabS$P_hat
   ESTIMATED_TStabS[[n_dataset]] <- result_sim1_StabS$T_hat
   
