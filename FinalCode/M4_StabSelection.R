@@ -30,8 +30,10 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
   result <- RegularizedSCA::cv_sparseSCA(DATA, Jk, R, MaxIter = 400, NRSTARTS = 5, LassoSequence, GLassoSequence=0, nfolds = 7, method = "component")  
   T_target <- result$T_hat                #We fix the estimated T matrix. All the estimated P in the following resampling procedure will be rotated 
                                           #after comparing the estimated T with with T_target.
+                                          #Arguably, using CV to generate T_target might not be a good idea. By the time I'm writing this code, I have already
+                                          #found out that index of sparseness works better. But CV is the most well known method, so I use CV here.
  
-  LassoSequence <- sort(LassoSequence, decreasing = T) 
+  LassoSequence <- sort(LassoSequence, decreasing = T) # the largest value enters first
   
   P_prob <- list()
   #### this is for P_prob[[1]], which is when used to compare to P_prob[[j]] (j= 2, ...) so as to record the highest probability across all j's (j=1,...)
@@ -41,10 +43,8 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
   sim_result <- foreach::foreach(i = 1:100, .combine='+') %dorng% {
     
     person_index <- sample(1:n_persons, n_persons/2, replace = F)
-    Data_sample <- DATA[person_index, ]
-    result <- RegularizedSCA::sparseSCA(Data_sample, Jk, R, LASSO = LassoSequence[1], GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 5, method = "component")
-    T_result <- result$Tmatrix
-    perm <- RegularizedSCA::TuckerCoef(T_target[person_index, ], T_result)$perm
+    result <- RegularizedSCA::sparseSCA(DATA[person_index, ], Jk, R, LASSO = LassoSequence[1], GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 5, method = "component")
+    perm <- RegularizedSCA::TuckerCoef(T_target[person_index, ], result$Tmatrix)$perm
     P_result <- result$Pmatrix[, perm]
     P_result[which(P_result!=0)] <- 1
     
@@ -55,17 +55,15 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
   P_prob[[1]] <- data.frame(sim_result)/100
   P_final <- P_prob[[1]]  #P_final will be updated after each comparison (see below)
   j <- 2
-  while(j <= length(LassoSequence)){
+  while(j <= length(LassoSequence)){  #note that it is not necessary to run j all the way to the length(LassoSequence), to some point, this algorthm will stop because enough non-zero loadings are gathered.
     cl <- snow::makeCluster(N_cores)
     doSNOW::registerDoSNOW(cl)
     #note that set.seed() and %dorng% ensure that parallel computing generates reproducable results.
     sim_result <- foreach::foreach(i = 1:100, .combine='+') %dorng% {
       
       person_index <- sample(1:n_persons, n_persons/2, replace = F)
-      Data_sample <- DATA[person_index, ]
-      result <- RegularizedSCA::sparseSCA(Data_sample, Jk, R, LASSO = LassoSequence[j], GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 5, method = "component")
-      T_result <- result$Tmatrix
-      perm <- RegularizedSCA::TuckerCoef(T_target[person_index, ], T_result)$perm
+      result <- RegularizedSCA::sparseSCA(DATA[person_index, ], Jk, R, LASSO = LassoSequence[j], GROUPLASSO = 0, MaxIter = 400, NRSTARTS = 5, method = "component")
+      perm <- RegularizedSCA::TuckerCoef(T_target[person_index, ], result$Tmatrix)$perm
       P_result <- result$Pmatrix[, perm]
       P_result[which(P_result!=0)] <- 1
       
@@ -77,7 +75,7 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
     P_prob[[j]] <- data.frame(sim_result)/100
     
     index <- which((P_final < P_prob[[j]]), arr.ind = TRUE)  # which((P_final < P_prob[[j]]) == TRUE, arr.ind = TRUE) is also fine
-    P_final[index] <- P_prob[[j]][index]
+    P_final[index] <- P_prob[[j]][index]  #update the P_final matrix, keep the highest probability
     
     if(sum(P_prob[[j]] >= Thr) > N_loading){
        j <- length(LassoSequence)  # just a way to skip the remaining Lasso values, since the total number of non-zero loadings already > N_loading prespecified by the user
@@ -87,9 +85,10 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
     print(j)
   }
   
-  thr <- sort(as.matrix(P_final), decreasing = TRUE)[N_loading] # this is the lowest probability whose corresponding loading should not be zero.
+  # Note that in the above code if(sum(P_prob[[j]] >= Thr) > N_loading), it could happen that at j, sum(P_prob[[j]]) >> N_loading. We would want to reduce the size of sum(P_prob[[j]]) close to N_loading
+  thr <- sort(as.matrix(P_final), decreasing = TRUE)[N_loading] # this is the lowest probability whose corresponding loading should not be zero, ACCORDING TO N_loading
   if(dim(which(P_final== thr, arr.ind = TRUE))[1] > 1){
-    print("It's likely that the total # of non-0 loadings in the final P_hat exceeds N_loading! Check!")  #this is problematic, in this case, more than one loading corresponds to the lowest probability. 
+    print("It's likely that the total # of non-0 loadings in the final P_hat greatly exceeds N_loading! Check!")  #this is problematic, in this case, more than one loading corresponds to the lowest probability. 
   }
   
   P_final[which(P_final < thr, arr.ind = TRUE)] <- 0
