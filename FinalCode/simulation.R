@@ -165,7 +165,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim1_RDCV <- M1_repeatedDoubleCV(POST_data,  R, Jk, N_cores = 20, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
+  result_sim1_RDCV <- M1_repeatedDoubleCV(POST_data,  R, Jk, N_cores = 10, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
   
   temp_lasso <- as.data.frame(result_sim1_RDCV$Lasso)
   temp_lasso$Var1 <- sort(as.numeric(levels(temp_lasso$Var1)))
