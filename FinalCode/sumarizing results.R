@@ -1,4 +1,9 @@
-# sumarizing results
+###############################################################
+###################   sumarizing results           ############
+###############################################################
+
+################ PART 1: plots ################################
+
 library(ggplot2)
 
 
@@ -152,3 +157,30 @@ boxplot(PL, ylab = "Proportion of loadings correctly selected", main = "30% nois
         cex.axis = 1.3, cex.lab = 1.25, cex.main = 1.5)
 
 
+##########################################################################################################################
+
+
+##################### PART 2: Table: number of loadings correctly identified  ##########################
+
+load("BenchmarkCV.RData")
+load("RepeatedDCV.RData")
+load("BIC_IS.RData")
+load("BOLASSO.RData")
+load("Stability.RData")
+n_dataset <- 1
+N_dataset = 20
+
+while(n_dataset <= N_dataset){
+  
+  filename <- paste("Data_", n_dataset, ".RData", sep = "")
+  load(filename)
+
+  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(POST_data, Jk, R, MaxIter = 400, NRSTARTS, Lassosequence, GLassosequence, nfolds = 7, method = "component") 
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_BM$T_hat)
+  RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult$tucker_value
+  RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_BM$P_hat[, tuckerresult$perm])  
+  
+  ESTIMATED_P[[n_dataset]] <- result_sim1_BM$P_hat
+  ESTIMATED_T[[n_dataset]] <- result_sim1_BM$T_hat
+  n_dataset <- n_dataset + 1
+}
