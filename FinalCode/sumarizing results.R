@@ -161,6 +161,17 @@ boxplot(PL, ylab = "Proportion of loadings correctly selected", main = "30% nois
 
 
 ##################### PART 2: Table: number of loadings correctly identified  ##########################
+numNo0_correct <- function(MATa, MATb){
+  num_corr <- sum((MATa != 0) & (MATb != 0))
+  return(num_corr)
+}
+num0_correct <- function(MATa, MATb){
+  num_corr <- sum((MATa == 0) & (MATb == 0))
+  return(num_corr)
+}
+
+truncate_threshold <- 0.0001  #I noticed that many estimated loadings were very small, but they were not exactly zero. it would be interesting to see
+                              # if we force loadings < truncate_threshold to be zeros. 
 
 load("BenchmarkCV.RData")
 load("RepeatedDCV.RData")
@@ -168,19 +179,63 @@ load("BIC_IS.RData")
 load("BOLASSO.RData")
 load("Stability.RData")
 n_dataset <- 1
-N_dataset = 20
 
-while(n_dataset <= N_dataset){
+numNo0_true <- array()
+num0_true <- array()
+
+numNo0_crt_Benchmark <- array()   #number of non-zero loadings 
+num0_Benchmark <- array()
+numNo0_crt_RdCV <- array() 
+num0_RdCV <- array()
+numNo0_crt_BIC <- array() 
+num0_BIC <- array()
+numNo0_crt_IS <- array() 
+num0_IS <- array()
+numNo0_crt_Bolasso <- array() 
+num0_Bolasso <- array()
+numNo0_crt_Stab <- array() 
+num0_Stab <- array()
+
+ 
+while(n_dataset <= 20){
   
   filename <- paste("Data_", n_dataset, ".RData", sep = "")
   load(filename)
 
-  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(POST_data, Jk, R, MaxIter = 400, NRSTARTS, Lassosequence, GLassosequence, nfolds = 7, method = "component") 
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_BM$T_hat)
-  RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult$tucker_value
-  RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_BM$P_hat[, tuckerresult$perm])  
+  numNo0_true[n_dataset] <- sum(my_data_list$P_mat !=0)
+  num0_true[n_dataset] <- sum(my_data_list$P_mat ==0)
   
-  ESTIMATED_P[[n_dataset]] <- result_sim1_BM$P_hat
-  ESTIMATED_T[[n_dataset]] <- result_sim1_BM$T_hat
+  #BenchmarkCV
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_T[[n_dataset]]$T_hat)
+  numNo0_crt_Benchmark[n_dataset]<- numNo0_correct(ESTIMATED_P[[n_dataset]][[1]][, tuckerresult$perm], my_data_list$P_mat )
+  num0_Benchmark[n_dataset] <- num0_correct(ESTIMATED_P[[n_dataset]][[1]][, tuckerresult$perm], my_data_list$P_mat )
+  
+  #RdCV
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_TrdCV[[n_dataset]])
+  numNo0_crt_RdCV[n_dataset] <- numNo0_correct(ESTIMATED_PrdCV[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  num0_RdCV[n_dataset]<- num0_correct(ESTIMATED_PrdCV[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  
+  #BIC
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_Tbic[[n_dataset]])
+  numNo0_crt_BIC[n_dataset] <- numNo0_correct(ESTIMATED_Pbic[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  num0_BICv <- num0_correct(ESTIMATED_Pbic[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  
+  #IS
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_TIS[[n_dataset]])
+  numNo0_crt_IS[n_dataset] <- numNo0_correct(ESTIMATED_PIS[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  num0_IS[n_dataset] <- num0_correct(ESTIMATED_PIS[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  
+  #Bolasso
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_Tbolasso[[n_dataset]])
+  numNo0_crt_Bolasso[n_dataset] <- numNo0_correct(ESTIMATED_Pbolasso[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  num0_Bolasso[n_dataset] <- num0_correct(ESTIMATED_Pbolasso[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  
+  #Stability Selection
+  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_TStabS[[n_dataset]])
+  numNo0_crt_Stab[n_dataset] <- numNo0_correct(ESTIMATED_PStabS[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  num0_Stab[n_dataset] <- num0_correct(ESTIMATED_PStabS[[n_dataset]][, tuckerresult$perm], my_data_list$P_mat )
+  
   n_dataset <- n_dataset + 1
 }
+
+
