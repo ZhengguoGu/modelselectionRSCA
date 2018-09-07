@@ -11,7 +11,7 @@ library(doRNG)
 
 ########## 1. re-analysis of the parent-child relationship survey data
 #1) load data
-load(family_data.RData)
+load("family_data.RData")
 set.seed(115)
 
 #2) load function M1_repeatedDoubleCV.R and pre-process data
