@@ -21,6 +21,8 @@ Lassosequence <- seq(0.0000001, maxLGlasso(data, num_var, R)$Lasso, length.out =
 GLassosequence <- seq(0.0000001, maxLGlasso(data, num_var, R)$Glasso, length.out = 50)
 
 #2) load function M1_repeatedDoubleCV.R
+source("M1_repeatedDoubleCV.R")
+
 set.seed(115)
 ptm <- proc.time()
 result_fam_RDCV <- M1_repeatedDoubleCV(data,  R, num_var, N_cores = 5, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep=20, n_seg=3, NRSTARTS = 5)
