@@ -24,6 +24,7 @@ GLassosequence <- seq(0.0000001, maxLGlasso(data, num_var, R)$Glasso, length.out
 source("M1_repeatedDoubleCV.R")
 
 set.seed(115)
+
 ptm <- proc.time()
 result_fam_RDCV <- M1_repeatedDoubleCV(data,  R, num_var, N_cores = 5, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep=20, n_seg=3, NRSTARTS = 5)
 
@@ -52,3 +53,19 @@ Glasso_IS <- max(GLassosequence[IS_index[2]])
 final_IS <- RegularizedSCA::sparseSCA(data, num_var, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter = 400, NRSTARTS = 20, method = "component")
 savetime_family_IS <- proc.time() - ptm
 save(final_IS, savetime_family_IS, file="family_IS.RData")
+
+#4) Undo the shrinkage and generate a table 
+# In Table 2, the component loading matrix obtained from Gu and Van Deun 2018, the authors undo the shrinkage, Hence, we undo the shrinkage here. 
+
+set.seed(115)
+final_fam_RdCV <- undoShrinkage(data, R = 5, 
+                                final_RDCV$Pmatrix)
+final_fam_RdCV$Pmatrix
+
+final_fam_IS <- undoShrinkage(data, R = 5, 
+                              final_IS$Pmatrix)
+final_fam_IS$Pmatrix
+
+final_fam <- cbind(final_fam_RdCV$Pmatrix, final_fam_IS$Pmatrix)
+
+write.table(final_fam, "final_fam.csv", sep = ",")
