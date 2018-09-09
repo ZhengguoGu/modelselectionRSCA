@@ -57,13 +57,16 @@ save(final_IS, savetime_family_IS, file="family_IS.RData")
 #4) Undo the shrinkage and generate a table 
 # In Table 2, the component loading matrix obtained from Gu and Van Deun 2018, the authors undo the shrinkage, Hence, we undo the shrinkage here. 
 
+perm <- RegularizedSCA::TuckerCoef(final_RDCV$Tmatrix, final_IS$Tmatrix)$perm
+IS_P_result <- final_IS$Pmatrix[, perm]
+
 set.seed(115)
 final_fam_RdCV <- undoShrinkage(data, R = 5, 
                                 final_RDCV$Pmatrix)
 final_fam_RdCV$Pmatrix
 
 final_fam_IS <- undoShrinkage(data, R = 5, 
-                              final_IS$Pmatrix)
+                              IS_P_result)  #position of components changed so as to be compared to the results by RdCV
 final_fam_IS$Pmatrix
 
 final_fam <- cbind(final_fam_RdCV$Pmatrix, final_fam_IS$Pmatrix)
