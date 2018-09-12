@@ -239,15 +239,13 @@ Pmat <- final_meta_RdCV$Pmatrix
 keepname <- rownames(Pmat)
 short_name <- array()  #some of the variable names are too long, we shorten them to the first 5 letters 
 for(i in 1:length(keepname)){
-  short_name[i] <- substring(keepname[i], first = 1, last = 28)
+  short_name[i] <- substring(keepname[i], first = 1, last = 27)
 }
-
-
 
 colnames(Pmat) <- c('Component 1', 'Component 2', 'Component 3', 'Component 4', 'Component 5')
 
 library(ggplot2)
-names <- rownames(Pmat)
+names <- short_name
 component <- colnames(Pmat)
 PmatVec <- c(Pmat)
 names <- rep(names, 5)
@@ -267,3 +265,32 @@ p + theme_grey(base_size = base_size) + labs(x = "", y = "") +
   scale_y_discrete(expand = c(0, 0))
 
 
+# We draw a heatmap for IS
+Pmat <- final_meta_IS$Pmatrix
+keepname <- rownames(Pmat)
+short_name <- array()  #some of the variable names are too long, we shorten them to the first 5 letters 
+for(i in 1:length(keepname)){
+  short_name[i] <- substring(keepname[i], first = 1, last = 27)
+}
+
+colnames(Pmat) <- c('Component 1', 'Component 2', 'Component 3', 'Component 4', 'Component 5')
+
+library(ggplot2)
+names <- short_name
+component <- colnames(Pmat)
+PmatVec <- c(Pmat)
+names <- rep(names, 5)
+component <- rep(component, each = 188)
+
+# note that part of the ggplot code below is from https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/
+# which is a website for drawing heatmap using ggplot2. 
+Pmat_dataframe <- data.frame(Loadings = PmatVec, Variables = factor(names, ordered = T, levels = short_name), Components = component)
+
+p <- ggplot(Pmat_dataframe, aes(x = Components, y = Variables) )+
+  geom_tile(aes(fill = Loadings), colour = "white") +
+  scale_fill_gradient2(low="green", mid = "black", high = "red") 
+
+base_size <- 7
+p + theme_grey(base_size = base_size) + labs(x = "", y = "") +
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0))
