@@ -90,7 +90,8 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
       #A <- t(estimatedP) %*% t(testset) 
       #SVD_DATA <- svd(A, R, R)
       #estimatedT <- SVD_DATA$v %*% t(SVD_DATA$u)
-      #e_hat[i] <- sum((testset - estimatedT %*% t(estimatedP))^2)  
+      #e_hat[i] <- sum((testset - estimatedT %*% t(estimatedP))^2)  COMMENTS: According to Filzmoser, Liebmann, & Varmuza (2009), no need to 
+      #compute MSE. One may simply check the frequency table of the optimal lasso and glasso tuning parameter values. This is why I omit the MSE steps. 
     
     }
     
