@@ -19,7 +19,7 @@ N_dataset <- 20  #how many datasets to generate
 ################################################################################################################################
 # A function for generating data
 ################################################################################################################################
-Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro, N_dataset){
+Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, N_dataset){
   
   R = 3 # in this simulation, we use R = 3
   
@@ -36,10 +36,6 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro, N_dataset){
   }
   
 
-  if(missing(pre_pro)){
-    pre_pro = "Yes"
-  }
-  
   Jk <- c(J1, J2)
   sumJk <- sum(J1 + J2)
   
