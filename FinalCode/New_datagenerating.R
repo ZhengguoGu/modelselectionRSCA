@@ -78,19 +78,19 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro, N_dataset){
   #SSXgenerate <- sum(Xgenerate ^ 2)
   #NoiseVSgenerate <- SSNoiseNew/SSXgenerate
   
-  if(pre_pro == "Yes"){
+  #if(pre_pro == "Yes"){
     
     ##### Data preprocessing ###################
     #library(RegularizedSCA)
-    Data_1 <- RegularizedSCA::pre_process(Xgenerate[, 1:J1], weight = T)
-    Data_2 <- RegularizedSCA::pre_process(Xgenerate[, (J1+1):(J1+J2)], weight = T)
-    Data_final <- cbind(Data_1, Data_2)
+   # Data_1 <- RegularizedSCA::pre_process(Xgenerate[, 1:J1], weight = T)
+    ##Data_2 <- RegularizedSCA::pre_process(Xgenerate[, (J1+1):(J1+J2)], weight = T)
+    # <- cbind(Data_1, Data_2)
     
-  }else{
+  #}else{
     
-    Data_final <- Xgenerate
+    #Data_final <- Xgenerate
     
-  }
+  #}
   
   Data_final <- list(data = Xgenerate, T_mat = Ttrue, P_mat = PTrueCnew)
   return(Data_final)
@@ -101,7 +101,7 @@ Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, pre_pro, N_dataset){
 k <- 1
 while(k <= N_dataset){
   
-  my_data_list <- Data_generation(I, J1, J2, R, PropNoise, Perc0, pre_pro = "Yes")
+  my_data_list <- Data_generation(I, J1, J2, R, PropNoise, Perc0, pre_pro = "no")
   
   filename <- paste("Data_", k, ".RData", sep = "")
   save(my_data_list, PropNoise, Perc0, file = filename)
