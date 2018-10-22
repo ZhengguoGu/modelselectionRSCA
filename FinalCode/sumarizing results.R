@@ -160,7 +160,7 @@ boxplot(PL, ylab = "Proportion of loadings correctly selected", main = "30% nois
 ##########################################################################################################################
 
 
-##################### PART 2: Table: number of loadings correctly identified  ##########################
+##################### PART 2: Table: number of loadings correctly identified and number of zero loadings correctly identified##########################
 numNo0_correct <- function(MATa, MATb){
   num_corr <- sum((MATa != 0) & (MATb != 0))
   return(num_corr)
@@ -170,8 +170,6 @@ num0_correct <- function(MATa, MATb){
   return(num_corr)
 }
 
-truncate_threshold <- 0.0001  #I noticed that many estimated loadings were very small, but they were not exactly zero. it would be interesting to see
-                              # if we force loadings < truncate_threshold to be zeros. 
 
 load("BenchmarkCV.RData")
 load("RepeatedDCV.RData")
@@ -276,122 +274,3 @@ boxplot(loadings_result, ylab = "Proportion of zero loadings correctly identifie
         cex.axis = 1.3, cex.lab = 1.25, cex.main = 1.5)
 
 
-##################### PART 3: (Not used in the article) Table: number of loadings correctly identified when small loadings are replaced with zeros ##########################
-truncate_threshold <- 0.001  #I noticed that many estimated loadings were very small, but they were not exactly zero. it would be interesting to see
-# if we force loadings < truncate_threshold to be zeros.
-
-numNo0_correct <- function(MATa, MATb){
-  num_corr <- sum((MATa != 0) & (MATb != 0))
-  return(num_corr)
-}
-num0_correct <- function(MATa, MATb){
-  num_corr <- sum((MATa == 0) & (MATb == 0))
-  return(num_corr)
-}
-
-trunc_loading_mat <- function(MAT, threshold){
-  MAT[MAT < threshold] <- 0
-  return(MAT)
-} 
-
-load("BenchmarkCV.RData")
-load("RepeatedDCV.RData")
-load("BIC_IS.RData")
-load("BOLASSO.RData")
-load("Stability.RData")
-n_dataset <- 1
-
-numNo0_true <- array()
-num0_true <- array()
-
-numNo0_crt_Benchmark <- array()   #number of non-zero loadings 
-num0_Benchmark <- array()
-numNo0_crt_RdCV <- array() 
-num0_RdCV <- array()
-numNo0_crt_BIC <- array() 
-num0_BIC <- array()
-numNo0_crt_IS <- array() 
-num0_IS <- array()
-numNo0_crt_Bolasso <- array() 
-num0_Bolasso <- array()
-numNo0_crt_Stab <- array() 
-num0_Stab <- array()
-
-
-while(n_dataset <= 20){
-  
-  filename <- paste("Data_", n_dataset, ".RData", sep = "")
-  load(filename)
-  
-  numNo0_true[n_dataset] <- sum(my_data_list$P_mat !=0)
-  num0_true[n_dataset] <- sum(my_data_list$P_mat ==0)
-  
-  #BenchmarkCV
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_T[[n_dataset]]$T_hat)
-  numNo0_crt_Benchmark[n_dataset]<- numNo0_correct(trunc_loading_mat(ESTIMATED_P[[n_dataset]][[1]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  num0_Benchmark[n_dataset] <- num0_correct(trunc_loading_mat(ESTIMATED_P[[n_dataset]][[1]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  
-  #RdCV
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_TrdCV[[n_dataset]])
-  numNo0_crt_RdCV[n_dataset] <- numNo0_correct(trunc_loading_mat(ESTIMATED_PrdCV[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  num0_RdCV[n_dataset]<- num0_correct(trunc_loading_mat(ESTIMATED_PrdCV[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  
-  #BIC
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_Tbic[[n_dataset]])
-  numNo0_crt_BIC[n_dataset] <- numNo0_correct(trunc_loading_mat(ESTIMATED_Pbic[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  num0_BIC[n_dataset] <- num0_correct(trunc_loading_mat(ESTIMATED_Pbic[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  
-  #IS
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_TIS[[n_dataset]])
-  numNo0_crt_IS[n_dataset] <- numNo0_correct(trunc_loading_mat(ESTIMATED_PIS[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  num0_IS[n_dataset] <- num0_correct(trunc_loading_mat(ESTIMATED_PIS[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  
-  #Bolasso
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_Tbolasso[[n_dataset]])
-  numNo0_crt_Bolasso[n_dataset] <- numNo0_correct(trunc_loading_mat(ESTIMATED_Pbolasso[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  num0_Bolasso[n_dataset] <- num0_correct(trunc_loading_mat(ESTIMATED_Pbolasso[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  
-  #Stability Selection
-  tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, ESTIMATED_TStabS[[n_dataset]])
-  numNo0_crt_Stab[n_dataset] <- numNo0_correct(trunc_loading_mat(ESTIMATED_PStabS[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  num0_Stab[n_dataset] <- num0_correct(trunc_loading_mat(ESTIMATED_PStabS[[n_dataset]], truncate_threshold)[, tuckerresult$perm], my_data_list$P_mat )
-  
-  n_dataset <- n_dataset + 1
-}
-
-Ratio_numNo0_crt_Benchmark <- numNo0_crt_Benchmark / numNo0_true 
-Ratio_num0_Benchmark <- num0_Benchmark / num0_true
-Ratio_numNo0_crt_RdCV <- numNo0_crt_RdCV / numNo0_true
-Ratio_num0_RdCV <- num0_RdCV / num0_true
-Ratio_numNo0_crt_BIC <- numNo0_crt_BIC / numNo0_true
-Ratio_num0_BIC <- num0_BIC / num0_true
-Ratio_numNo0_crt_IS <- numNo0_crt_IS / numNo0_true
-Ratio_num0_IS <- num0_IS / num0_true
-Ratio_numNo0_crt_Bolasso <- numNo0_crt_Bolasso / numNo0_true
-Ratio_num0_Bolasso <- num0_Bolasso / num0_true
-Ratio_numNo0_crt_Stab <- numNo0_crt_Stab / numNo0_true
-Ratio_num0_Stab <- num0_Stab / num0_true
-
-
-library(ggplot2)
-loadings_result <- cbind(Ratio_numNo0_crt_Benchmark,
-                         Ratio_numNo0_crt_RdCV,
-                         Ratio_numNo0_crt_BIC,
-                         Ratio_numNo0_crt_IS,
-                         Ratio_numNo0_crt_Bolasso, 
-                         Ratio_numNo0_crt_Stab)
-colnames(loadings_result) <- c("CV", "RdCV", "BIC", "IS", "BoLasso", "Stab. selection")
-
-boxplot(loadings_result, ylab = "Proportion of non-zero loadings correctly selected", main = "0.5% noise and 30% zeros", ylim = c(0,1), 
-        cex.axis = 1.3, cex.lab = 1.25, cex.main = 1.5)
-
-loadings_result <- cbind(Ratio_num0_Benchmark,
-                         Ratio_num0_RdCV,
-                         Ratio_num0_BIC,
-                         Ratio_num0_IS,
-                         Ratio_num0_Bolasso, 
-                         Ratio_num0_Stab)
-colnames(loadings_result) <- c("CV", "RdCV", "BIC", "IS", "BoLasso", "Stab. selection")
-
-boxplot(loadings_result, ylab = "Proportion of zero loadings correctly identified", main = "0.5% noise and 30% zeros", ylim = c(0,1), 
-        cex.axis = 1.3, cex.lab = 1.25, cex.main = 1.5)

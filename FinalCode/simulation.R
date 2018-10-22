@@ -69,7 +69,10 @@ StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
 }
 
 ####################################################################################################
-# Calculate the number of variables correctly selected
+# Calculate the number of variables AND zero-loadings correctly selected
+# Note: this function is about the total number of variables correctedly selected and zeros correctly retained
+#
+# for the number of variables correctly selected, and the number of zero loadings correctly identified, please see "sumarizing results.R"
 ###################################################################################################
 
 num_correct <- function (TargetP, EstimatedP){
