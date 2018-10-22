@@ -8,6 +8,8 @@ library(doRNG)
 # StrucSCA_withIndex() estimates T and P, given the pre-defined structure of P 
 ##############################################################################################
 StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
+  
+  # note that this function is needed for M3_Bolasso.R and M4_StabSelection.R
   DATA <- data.matrix(DATA)
   
   I_Data <- dim(DATA)[1]
