@@ -2,7 +2,7 @@
 ####  Illustrative applications 
 #######################################################
 library(devtools)
-install_github("ZhengguoGu/RegularizedSCA")
+install_github("ZhengguoGu/RegularizedSCA")  #load the lastest R package from Github
 library(RegularizedSCA)
 library(foreach)
 library(snow)
