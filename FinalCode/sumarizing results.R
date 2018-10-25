@@ -1,8 +1,8 @@
-###############################################################
-###################   sumarizing results           ############
-###############################################################
+################################################################################
+###################   sumarizing results of the simulation study    ############
+################################################################################
 
-################ PART 1: plots ################################
+################ PART 1: plots for figure 2 and 5 ################################
 
 library(ggplot2)
 
@@ -160,7 +160,11 @@ boxplot(PL, ylab = "Proportion of loadings correctly selected", main = "30% nois
 ##########################################################################################################################
 
 
-##################### PART 2: Table: number of loadings correctly identified and number of zero loadings correctly identified##########################
+##################### PART 2: plots for figures 3 and 4 ##########################
+
+# (authors' comment: first we have to record the number of non-zero loadings that are correctly identified
+# and also the number of zero loadings that are correctly identified.)
+
 numNo0_correct <- function(MATa, MATb){
   num_corr <- sum((MATa != 0) & (MATb != 0))
   return(num_corr)
