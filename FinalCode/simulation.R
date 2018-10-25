@@ -4,8 +4,18 @@ library(snow)
 library(doSNOW)
 library(doRNG)
 
+################# LOAD functions ########################
+
+#please load the following functions first
+#1. M1_repeatedDoubleCV.R
+#2. M2_BIC12andIS.R
+#3. M3_Bolasso.R
+#4. M4_StabSelection.R
+
+
 ##############################################################################################
 # StrucSCA_withIndex() estimates T and P, given the pre-defined structure of P 
+# This is used in M3_Bolasso.R and M4_StabSelection.R
 ##############################################################################################
 StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
   
