@@ -40,7 +40,7 @@ StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
   Lossvec <- array()
   while (conv == 0) {
     
-    #### the block #############################
+    #### the block ########################
     A <- Pt %*% t(DATA)
     SVD_DATA <- svd(A, R, R)
     Tmat <- SVD_DATA$v %*% t(SVD_DATA$u)
@@ -155,10 +155,8 @@ while(n_dataset <= N_dataset){
 }
 
 
-save(RESULT_BenchmarCV, ESTIMATED_P, ESTIMATED_T, file = "BenchmarkCV.RData")
-
-
-
+filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_benchmark_CV", ".RData", sep = "")
+save(RESULT_BenchmarCV, ESTIMATED_P, ESTIMATED_T, file = filename)
 
 
 ### 2. repeated Double CV #####
@@ -204,7 +202,8 @@ while(n_dataset <= N_dataset){
   
 }
 
-save(RESULT_rdCV, ESTIMATED_PrdCV, ESTIMATED_TrdCV, file = "RepeatedDCV.RData")
+filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_RepeatedDCV", ".RData", sep = "")
+save(RESULT_rdCV, ESTIMATED_PrdCV, ESTIMATED_TrdCV, file = filename)
 
 
 
@@ -257,7 +256,8 @@ while(n_dataset <= N_dataset){
   n_dataset <- n_dataset + 1
 }
 
-save(RESULT_BIC, RESULT_IS, ESTIMATED_Pbic, ESTIMATED_Tbic, ESTIMATED_PIS, ESTIMATED_TIS,  file = "BIC_IS.RData")
+filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_BIC_IS", ".RData", sep = "")
+save(RESULT_BIC, RESULT_IS, ESTIMATED_Pbic, ESTIMATED_Tbic, ESTIMATED_PIS, ESTIMATED_TIS,  file = filename)
 
 
 
@@ -291,7 +291,9 @@ while(n_dataset <= N_dataset){
   
   n_dataset <- n_dataset + 1
 }
-save(RESULT_BoLasso, ESTIMATED_Pbolasso, ESTIMATED_Tbolasso, file = "BOLASSO.RData")
+
+filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_BOLASSO", ".RData", sep = "")
+save(RESULT_BoLasso, ESTIMATED_Pbolasso, ESTIMATED_Tbolasso, file = filename)
 
 
 ### 5. Stability selection  #############
@@ -325,4 +327,6 @@ while(n_dataset <= N_dataset){
   
   n_dataset <- n_dataset + 1
 }
-save(RESULT_StabS, ESTIMATED_PStabS, ESTIMATED_TStabS, file = "Stability.RData")
+
+filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_Stability", ".RData", sep = "")
+save(RESULT_StabS, ESTIMATED_PStabS, ESTIMATED_TStabS, file = "filename.RData")
