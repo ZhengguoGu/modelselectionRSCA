@@ -1,12 +1,14 @@
-# N_dataset <- 20 
+
 
 set.seed(1)
-PropNoise = 0.3
-Perc0 = .5
 
-I <- 28
-J1 <- 144
-J2 <- 44
+Perc0 = .3   #.3 or .5
+PropNoise = 0.05  # .05, .3
+
+I <- 20     # 20 or 200
+J1 <- 40    # 40 or 120
+J2 <- 10    # 10 or 30
+
 Jk <- c(J1, J2)
 R <- 3
 N_dataset <- 20  #how many datasets to generate
@@ -21,21 +23,6 @@ N_dataset <- 20  #how many datasets to generate
 ################################################################################################################################
 Data_generation <- function(I, J1, J2, R, PropNoise, Perc0, N_dataset){
   
-  R = 3 # in this simulation, we use R = 3
-  
-  if(missing(I)){
-    I = 28
-  }
-  
-  if(missing(J1)){
-    J1 = 144
-  }
-  
-  if(missing(J2)){
-    J2 = 44
-  }
-  
-
   Jk <- c(J1, J2)
   sumJk <- sum(J1 + J2)
   
