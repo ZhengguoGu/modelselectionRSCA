@@ -33,10 +33,10 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
   n_persons <- nrow(DATA)
   person_index <- sample(1:n_persons, n_persons, replace = TRUE)
   Data_sample <- DATA[person_index, ]
-  result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = NRSTARTS, LassoSequence, GLassoSequence, nfolds = 7, method = "component")  
+  result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 300, NRSTARTS = NRSTARTS, LassoSequence, GLassoSequence, nfolds = 5, method = "component")  
   T_target <- result$T_hat                #We fix the estimated T matrix from the first resampled data.
-  #All the estimated T matrix are to be compared to this estimated T.       
-  #(This is due to permutation freedom)
+                                          #All the estimated T matrix are to be compared to this estimated T.       
+                                          #(This is due to permutation freedom)
   P_indexset <- result$P_hat
   P_indexset[which(P_indexset!=0)] <- 1  #non-zero loadings are marked as 1
   
@@ -48,7 +48,7 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
     
     person_index <- sample(1:n_persons, n_persons, replace = TRUE)
     Data_sample <- DATA[person_index, ]
-    result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 400, NRSTARTS = 2, LassoSequence, GLassoSequence, nfolds = 7, method = "component")
+    result <- RegularizedSCA::cv_sparseSCA(Data_sample, Jk, R, MaxIter = 300, NRSTARTS = 5, LassoSequence, GLassoSequence, nfolds = 5, method = "component")
     T_result <- result$T_hat
     perm <- RegularizedSCA::TuckerCoef(T_target, T_result)$perm
     P_result <- result$P_hat[, perm]
@@ -61,7 +61,7 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
   
   P_indexset <- data.frame(sim_result) + P_indexset
   
-  P_indexset[P_indexset != N_boots] <- 0  #Variables that have not been selected N_boots times are left to be zero
+  P_indexset[P_indexset != N_boots] <- 0  #Variables that have not been selected N_boots times are set to be zero
   
   # Reestimate P and T, with 20 starts
   Pout3d <- list()
@@ -70,7 +70,7 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
   LOSSvec <- list()
   
   for (n in 1:20) { 
-    VarSelectResult <- StrucSCA_withIndex(DATA, Jk, R, P_indexset = P_indexset, MaxIter=400)
+    VarSelectResult <- StrucSCA_withIndex(DATA, Jk, R, P_indexset = P_indexset, MaxIter=300)
     Pout3d[[n]] <- VarSelectResult$Pmatrix
     Tout3d[[n]] <- VarSelectResult$Tmatrix
     LOSS[n] <- VarSelectResult$Loss
