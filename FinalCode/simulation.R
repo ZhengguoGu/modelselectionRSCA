@@ -26,13 +26,12 @@ StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
   sumJk <- dim(DATA)[2]
   eps <- 10^(-12)
   if (missing(MaxIter)) {
-    MaxIter <- 400
+    MaxIter <- 300
   }
   P <- matrix(stats::rnorm(sumJk * R), nrow = sumJk, ncol = R)
   P[P_indexset == 0] <- 0
   Pt <- t(P)
   
-  sqP <- P^2
   residual <- sum(DATA^2)
   Lossc <- residual 
   
@@ -41,28 +40,29 @@ StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
   Lossvec <- array()
   while (conv == 0) {
     
-    SVD_DATA <- svd(DATA, R, R)
-    Tmat <- SVD_DATA$u
+    #### the block #############################
+    A <- Pt %*% t(DATA)
+    SVD_DATA <- svd(A, R, R)
+    Tmat <- SVD_DATA$v %*% t(SVD_DATA$u)
+    #######################################
     
-    residual <- sum((DATA - Tmat %*% Pt)^2)
-    Lossu <- residual 
-    
+    Lossu <- sum((DATA - Tmat %*% Pt)^2)
+   
     P <- t(DATA) %*% Tmat
     P[P_indexset == 0] <- 0
     Pt <- t(P)
     
-    sqP <- P^2
-    residual <- sum((DATA - Tmat %*% Pt)^2)
-    Lossu2 <- residual
+    Lossu2 <- sum((DATA - Tmat %*% Pt)^2)
+    
     if (abs(Lossc - Lossu) < 10^(-9)) {
       Loss <- Lossu
-      residual <- residual
+      residual <- Lossu2
       P[abs(P) <= 2 * eps] <- 0
       conv <- 1
     }
     else if (iter > MaxIter) {
       Loss <- Lossu
-      residual <- residual
+      residual <- Lossu2
       P[abs(P) <= 2 * eps] <- 0
       conv <- 1
     }
@@ -75,6 +75,7 @@ StrucSCA_withIndex <- function (DATA, Jk, R, P_indexset, MaxIter) {
   return_varselect$Tmatrix <- Tmat
   return_varselect$Loss <- Loss
   return_varselect$Lossvec <- Lossvec
+  #return_varselect$Residual <- residual
   return(return_varselect)
 }
 
@@ -207,7 +208,7 @@ save(RESULT_rdCV, ESTIMATED_PrdCV, ESTIMATED_TrdCV, file = "RepeatedDCV.RData")
 
 
 
-### 3. BIC and IS
+### 3. BIC and IS #####
 n_dataset <- 1
 N_dataset = 20
 RESULT_BIC <- matrix(NA, N_dataset, 2)
@@ -260,7 +261,7 @@ save(RESULT_BIC, RESULT_IS, ESTIMATED_Pbic, ESTIMATED_Tbic, ESTIMATED_PIS, ESTIM
 
 
 
-### 4. Bolasso
+### 4. Bolasso   ##################
 n_dataset <- 1
 N_dataset = 20
 RESULT_BoLasso <- matrix(NA, N_dataset, 2)
@@ -293,7 +294,7 @@ while(n_dataset <= N_dataset){
 save(RESULT_BoLasso, ESTIMATED_Pbolasso, ESTIMATED_Tbolasso, file = "BOLASSO.RData")
 
 
-### 5. Stability selection
+### 5. Stability selection  #############
 
 n_dataset <- 1
 N_dataset = 20
