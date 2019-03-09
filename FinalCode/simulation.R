@@ -116,9 +116,9 @@ num_correct <- function (TargetP, EstimatedP){
 
 
 
-I <- 28
-J1 <- 144
-J2 <- 44
+I <- 20
+J1 <- 40
+J2 <- 10
 Jk <- c(J1, J2)
 R <- 3
 NRSTARTS <- 5
