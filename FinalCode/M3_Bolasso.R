@@ -63,13 +63,13 @@ Bolasso_CV <- function(DATA, Jk, R, N_boots, LassoSequence, GLassoSequence, N_co
   
   P_indexset[P_indexset != N_boots] <- 0  #Variables that have not been selected N_boots times are set to be zero
   
-  # Reestimate P and T, with 20 starts
+  # Reestimate P and T, with 5 multi-starts
   Pout3d <- list()
   Tout3d <- list()
   LOSS <- array()
   LOSSvec <- list()
   
-  for (n in 1:20) { 
+  for (n in 1:5) { 
     VarSelectResult <- StrucSCA_withIndex(DATA, Jk, R, P_indexset = P_indexset, MaxIter=300)
     Pout3d[[n]] <- VarSelectResult$Pmatrix
     Tout3d[[n]] <- VarSelectResult$Tmatrix
