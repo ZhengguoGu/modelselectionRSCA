@@ -114,7 +114,7 @@ num_correct <- function (TargetP, EstimatedP){
 ####
 ##############################################################################################################
 
-
+N_cores <- 10 # number of cores for parallel computing
 
 I <- 20
 J1 <- 40
@@ -138,8 +138,8 @@ while(n_dataset <= N_dataset){
   filename <- paste("Data_", n_dataset, ".RData", sep = "")
   load(filename)
   
-  post_data1 <- RegularizedSCA::pre_process(my_data_list$data[, 1:144])
-  post_data2 <- RegularizedSCA::pre_process(my_data_list$data[, 145:188])
+  post_data1 <- RegularizedSCA::pre_process(my_data_list$data[, 1:J1])
+  post_data2 <- RegularizedSCA::pre_process(my_data_list$data[, (J1+1):(J1+J2)])
   POST_data <- cbind(post_data1, post_data2)
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
@@ -172,14 +172,14 @@ while(n_dataset <= N_dataset){
   filename <- paste("Data_", n_dataset, ".RData", sep = "")
   load(filename)
   
-  post_data1 <- RegularizedSCA::pre_process(my_data_list$data[, 1:144])
-  post_data2 <- RegularizedSCA::pre_process(my_data_list$data[, 145:188])
+  post_data1 <- RegularizedSCA::pre_process(my_data_list$data[, 1:J1])
+  post_data2 <- RegularizedSCA::pre_process(my_data_list$data[, (J1+1):(J1+J2)])
   POST_data <- cbind(post_data1, post_data2)
   
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim1_RDCV <- M1_repeatedDoubleCV(POST_data,  R, Jk, N_cores = 10, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
+  result_sim1_RDCV <- M1_repeatedDoubleCV(POST_data,  R, Jk, N_cores = N_cores, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
   
   temp_lasso <- as.data.frame(result_sim1_RDCV$Lasso)
   temp_lasso$Var1 <- sort(as.numeric(levels(temp_lasso$Var1)))
