@@ -1,5 +1,3 @@
-
-
 set.seed(1)
 
 Perc0 = .3   #.3 or .5
