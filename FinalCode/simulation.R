@@ -281,7 +281,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim1_Bolasso <- Bolasso_CV(POST_data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, N_cores = 20, NRSTARTS)
+  result_sim1_Bolasso <- Bolasso_CV(POST_data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, N_cores = N_cores, NRSTARTS)
 
   tuckerresult_Bolasso <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_Bolasso$T_hat)    
   RESULT_BoLasso[n_dataset, 1] <- tuckerresult_Bolasso$tucker_value 
@@ -317,7 +317,7 @@ while(n_dataset <= N_dataset){
   POST_data <- cbind(post_data1, post_data2)
   
   LassoSequence = exp(seq(from = log(0.00000001), to = log(RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso), length.out = 500))  #we use Lasso only
-  result_sim1_StabS <- M4_StabSelection(POST_data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores=10)
+  result_sim1_StabS <- M4_StabSelection(POST_data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores=N_cores)
   
   tuckerresult_StabS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_StabS$T_hat)    
   RESULT_StabS[n_dataset, 1] <- tuckerresult_StabS$tucker_value 
