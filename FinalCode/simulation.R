@@ -1,3 +1,5 @@
+library(devtools)
+install_github("ZhengguoGu/RegularizedSCA")
 library(RegularizedSCA)
 library(foreach)
 library(snow)
