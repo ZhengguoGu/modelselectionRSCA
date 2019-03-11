@@ -238,7 +238,7 @@ while(n_dataset <= N_dataset){
   Croux_index <- which(result_sim_BICIS$Croux == min(result_sim_BICIS$Croux), arr.ind = T)
   Lasso_croux <- max(Lassosequence[Croux_index[1]])  #max() is used in case multiple lasso values are chosen. 
   GLasso_croux <- max(GLassosequence[Croux_index[2]]) 
-  final_croux <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_croux, GROUPLASSO = GLasso_croux, MaxIter = 300, NRSTARTS = 5, method = "component")
+  final_croux <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_croux, GROUPLASSO = GLasso_croux, MaxIter = 400, NRSTARTS = 5, method = "component")
   ESTIMATED_Pbic[[n_dataset]] <- final_croux$Pmatrix
   ESTIMATED_Tbic[[n_dataset]] <- final_croux$Tmatrix
   tuckerresult_croux <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_croux$Tmatrix)    
@@ -249,7 +249,7 @@ while(n_dataset <= N_dataset){
   IS_index <- which(result_sim_BICIS$IS == max(result_sim_BICIS$IS), arr.ind = T)
   Lasso_IS <- max(Lassosequence[IS_index[1]])
   Glasso_IS <- max(GLassosequence[IS_index[2]])
-  final_IS <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter = 300, NRSTARTS = 5, method = "component")
+  final_IS <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter = 400, NRSTARTS = 5, method = "component")
   ESTIMATED_PIS[[n_dataset]] <- final_IS$Pmatrix
   ESTIMATED_TIS[[n_dataset]] <- final_IS$Tmatrix
   tuckerresult_IS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_IS$Tmatrix)    
