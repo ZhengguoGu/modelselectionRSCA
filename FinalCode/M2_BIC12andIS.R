@@ -23,7 +23,7 @@ M2_BIC_IS <- function(DATA, Jk, R, LassoSequence, GLassoSequence, NRSTARTS){
     NRSTARTS = 5
   }
   
-  VarSelect0 <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = 0, GROUPLASSO = 0, MaxIter = 300, NRSTARTS = NRSTARTS, method = "component")
+  VarSelect0 <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = 0, GROUPLASSO = 0, MaxIter = 400, NRSTARTS = NRSTARTS, method = "component")
   P_hat0 <- VarSelect0$Pmatrix
   T_hat0 <- VarSelect0$Tmatrix
   
@@ -39,7 +39,7 @@ M2_BIC_IS <- function(DATA, Jk, R, LassoSequence, GLassoSequence, NRSTARTS){
   for(i in 1:length(LassoSequence)){
     for(j in 1:length(GLassoSequence)){
       
-      VarSelect <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = LassoSequence[i], GROUPLASSO = GLassoSequence[j], MaxIter = 300, NRSTARTS = 5, method = "component")
+      VarSelect <- RegularizedSCA::sparseSCA(DATA, Jk, R, LASSO = LassoSequence[i], GROUPLASSO = GLassoSequence[j], MaxIter = 400, NRSTARTS = NRSTARTS, method = "component")
       P_hat <- VarSelect$Pmatrix
       T_hat <- VarSelect$Tmatrix
       V_tilde <- sum((DATA - T_hat %*% t(P_hat))^2)
