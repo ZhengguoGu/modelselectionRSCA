@@ -118,14 +118,14 @@ num_correct <- function (TargetP, EstimatedP){
 
 N_cores <- 10 # number of cores for parallel computing
 
-I <- 20
-J1 <- 40
-J2 <- 10
+I <- 28
+J1 <- 144
+J2 <- 44
 Jk <- c(J1, J2)
 R <- 3
 NRSTARTS <- 5
 n_rep = 20
-n_seg = 2
+n_seg = 3
 N_boots = 20
 
 ### 1. benchmark CV
@@ -146,7 +146,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
  
-  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(POST_data, Jk, R, MaxIter = 300, NRSTARTS, Lassosequence, GLassosequence, nfolds = 5, method = "component") 
+  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(POST_data, Jk, R, MaxIter = 400, NRSTARTS, Lassosequence, GLassosequence, nfolds = 7, method = "component") 
   tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_BM$T_hat)
   RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult$tucker_value
   RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_BM$P_hat[, tuckerresult$perm])  
@@ -191,8 +191,8 @@ while(n_dataset <= N_dataset){
   GLASSO <- max(temp_glasso[temp_glasso[,2] == max(temp_glasso[,2]),1])
   
   
-  final_RDCV <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter = 300,
-                                          NRSTARTS = 5, method = "component")
+  final_RDCV <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter = 400,
+                                          NRSTARTS = 20, method = "component")
   
   tuckerresult_RDCV <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_RDCV$Tmatrix)
   RESULT_rdCV[n_dataset, 1] <- tuckerresult_RDCV$tucker_value 

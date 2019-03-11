@@ -100,7 +100,7 @@ M4_StabSelection <- function(DATA, Jk, R, LassoSequence, N_loading, Thr, NRSTART
   LOSSvec <- list()
   
   for (n in 1:NRSTARTS) { 
-    VarSelectResult <- StrucSCA_withIndex(DATA, Jk, R, P_indexset = P_final, MaxIter=300)
+    VarSelectResult <- StrucSCA_withIndex(DATA, Jk, R, P_indexset = P_final, MaxIter=400)
     Pout3d[[n]] <- VarSelectResult$Pmatrix
     Tout3d[[n]] <- VarSelectResult$Tmatrix
     LOSS[n] <- VarSelectResult$Loss
