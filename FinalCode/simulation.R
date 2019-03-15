@@ -123,7 +123,7 @@ J1 <- 144
 J2 <- 44
 Jk <- c(J1, J2)
 R <- 3
-NRSTARTS <- 5
+NRSTARTS <- 2
 n_rep = 20
 n_seg = 3
 N_boots = 20
@@ -257,6 +257,8 @@ while(n_dataset <= N_dataset){
   RESULT_IS[n_dataset, 2] <- num_correct(my_data_list$P_mat, final_IS$Pmatrix[, tuckerresult_IS$perm])  
   
   n_dataset <- n_dataset + 1
+  
+  print(n_dataset)
 }
 
 filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_BIC_IS", ".RData", sep = "")
@@ -293,6 +295,8 @@ while(n_dataset <= N_dataset){
   ESTIMATED_Tbolasso[[n_dataset]] <- result_sim1_Bolasso$T_hat
   
   n_dataset <- n_dataset + 1
+  
+  print(n_dataset)
 }
 
 filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_BOLASSO", ".RData", sep = "")
@@ -329,7 +333,9 @@ while(n_dataset <= N_dataset){
   ESTIMATED_TStabS[[n_dataset]] <- result_sim1_StabS$T_hat
   
   n_dataset <- n_dataset + 1
+  
+  print(n_dataset)
 }
 
 filename <- paste("I_", I,"_J1_", J1, "_J2_", J2, "_Stability", ".RData", sep = "")
-save(RESULT_StabS, ESTIMATED_PStabS, ESTIMATED_TStabS, file = "filename.RData")
+save(RESULT_StabS, ESTIMATED_PStabS, ESTIMATED_TStabS, file = filename)
