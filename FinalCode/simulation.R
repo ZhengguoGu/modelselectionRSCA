@@ -118,14 +118,14 @@ num_correct <- function (TargetP, EstimatedP){
 
 N_cores <- 10 # number of cores for parallel computing
 
-I <- 28
-J1 <- 144
-J2 <- 44
+I <- 20
+J1 <- 120
+J2 <- 30
 Jk <- c(J1, J2)
 R <- 3
 NRSTARTS <- 2
 n_rep = 20
-n_seg = 3
+n_seg = 2
 N_boots = 20
 
 ### 1. benchmark CV
