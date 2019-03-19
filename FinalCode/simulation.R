@@ -123,10 +123,12 @@ J1 <- 120
 J2 <- 30
 Jk <- c(J1, J2)
 R <- 3
-NRSTARTS <- 2
-n_rep = 20
-n_seg = 2
-N_boots = 20
+NRSTARTS <- 2 # #random starts
+n_rep = 50    # #repetition for rdCV
+n_seg = 2     # #segments for rdCV
+N_boots = 50  # #repetition for BoLasso
+nfolds = 5 # 5-fold CV 
+MaxIter = 300 # #maximum iterations
 
 ### 1. benchmark CV
 set.seed(1)
@@ -146,7 +148,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
  
-  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(POST_data, Jk, R, MaxIter = 400, NRSTARTS, Lassosequence, GLassosequence, nfolds = 7, method = "component") 
+  result_sim1_BM <- RegularizedSCA::cv_sparseSCA(POST_data, Jk, R, MaxIter = MaxIter, NRSTARTS, Lassosequence, GLassosequence, nfolds, method = "component") 
   tuckerresult <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_BM$T_hat)
   RESULT_BenchmarCV[n_dataset, 1] <- tuckerresult$tucker_value
   RESULT_BenchmarCV[n_dataset, 2] <- num_correct(my_data_list$P_mat, result_sim1_BM$P_hat[, tuckerresult$perm])  
@@ -181,7 +183,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim1_RDCV <- M1_repeatedDoubleCV(POST_data,  R, Jk, N_cores = N_cores, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep , n_seg, NRSTARTS)
+  result_sim1_RDCV <- M1_repeatedDoubleCV(POST_data,  R, Jk, N_cores, Lassosequence, GLassosequence, n_rep , n_seg, NRSTARTS, nfolds, MaxIter)
   
   temp_lasso <- as.data.frame(result_sim1_RDCV$Lasso)
   temp_lasso$Var1 <- sort(as.numeric(levels(temp_lasso$Var1)))
@@ -191,8 +193,7 @@ while(n_dataset <= N_dataset){
   GLASSO <- max(temp_glasso[temp_glasso[,2] == max(temp_glasso[,2]),1])
   
   
-  final_RDCV <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter = 400,
-                                          NRSTARTS = 20, method = "component")
+  final_RDCV <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter, NRSTARTS, method = "component")
   
   tuckerresult_RDCV <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_RDCV$Tmatrix)
   RESULT_rdCV[n_dataset, 1] <- tuckerresult_RDCV$tucker_value 
@@ -232,13 +233,13 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim_BICIS <- M2_BIC_IS(POST_data, Jk, R, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS)
+  result_sim_BICIS <- M2_BIC_IS(POST_data, Jk, R, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, NRSTARTS, MaxIter)
   
 
   Croux_index <- which(result_sim_BICIS$Croux == min(result_sim_BICIS$Croux), arr.ind = T)
   Lasso_croux <- max(Lassosequence[Croux_index[1]])  #max() is used in case multiple lasso values are chosen. 
   GLasso_croux <- max(GLassosequence[Croux_index[2]]) 
-  final_croux <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_croux, GROUPLASSO = GLasso_croux, MaxIter = 400, NRSTARTS = 5, method = "component")
+  final_croux <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_croux, GROUPLASSO = GLasso_croux, MaxIter, NRSTARTS, method = "component")
   ESTIMATED_Pbic[[n_dataset]] <- final_croux$Pmatrix
   ESTIMATED_Tbic[[n_dataset]] <- final_croux$Tmatrix
   tuckerresult_croux <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_croux$Tmatrix)    
@@ -249,7 +250,7 @@ while(n_dataset <= N_dataset){
   IS_index <- which(result_sim_BICIS$IS == max(result_sim_BICIS$IS), arr.ind = T)
   Lasso_IS <- max(Lassosequence[IS_index[1]])
   Glasso_IS <- max(GLassosequence[IS_index[2]])
-  final_IS <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter = 400, NRSTARTS = 5, method = "component")
+  final_IS <- RegularizedSCA::sparseSCA(POST_data, Jk, R, LASSO = Lasso_IS, GROUPLASSO = Glasso_IS, MaxIter, NRSTARTS, method = "component")
   ESTIMATED_PIS[[n_dataset]] <- final_IS$Pmatrix
   ESTIMATED_TIS[[n_dataset]] <- final_IS$Tmatrix
   tuckerresult_IS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, final_IS$Tmatrix)    
@@ -286,7 +287,7 @@ while(n_dataset <= N_dataset){
   Lassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso, length.out = 50)
   GLassosequence <- seq(0.0000001, RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Glasso, length.out = 50)
   
-  result_sim1_Bolasso <- Bolasso_CV(POST_data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, N_cores = N_cores, NRSTARTS)
+  result_sim1_Bolasso <- Bolasso_CV(POST_data, Jk, R, N_boots, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, N_cores, NRSTARTS, nfolds, MaxIter)
 
   tuckerresult_Bolasso <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_Bolasso$T_hat)    
   RESULT_BoLasso[n_dataset, 1] <- tuckerresult_Bolasso$tucker_value 
@@ -324,7 +325,7 @@ while(n_dataset <= N_dataset){
   POST_data <- cbind(post_data1, post_data2)
   
   LassoSequence = exp(seq(from = log(0.00000001), to = log(RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso), length.out = 500))  #we use Lasso only
-  result_sim1_StabS <- M4_StabSelection(POST_data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores=N_cores)
+  result_sim1_StabS <- M4_StabSelection(POST_data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores, nfolds, MaxIter)
   
   tuckerresult_StabS <- RegularizedSCA::TuckerCoef(my_data_list$T_mat, result_sim1_StabS$T_hat)    
   RESULT_StabS[n_dataset, 1] <- tuckerresult_StabS$tucker_value 

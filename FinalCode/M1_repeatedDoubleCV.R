@@ -9,7 +9,7 @@
 # N_cores: number of cores (for parallel computing)
 #######################################################################################
 
-M1_repeatedDoubleCV <- function(DATA, R, Jk, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg, NRSTARTS){
+M1_repeatedDoubleCV <- function(DATA, R, Jk, N_cores, LassoSequence,  GLassoSequence, n_rep, n_seg, NRSTARTS, nfolds, MaxIter){
   #library(RegularizedSCA)
   #library(foreach)
   #library(snow)
@@ -83,7 +83,7 @@ sim_result <- foreach::foreach(r = 1:n_rep, .combine='cbind') %dorng% {
       #testset <- DATA[testset_index, ]
       calibset <- DATA[!testset_index, ]
     
-      results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter = 400, NRSTARTS = NRSTARTS, LassoSequence, GLassoSequence, nfolds = 7, method = "component")
+      results_innerloop <- RegularizedSCA::cv_sparseSCA(calibset, Jk, R, MaxIter, NRSTARTS, LassoSequence, GLassoSequence, nfolds, method = "component")
       OptimumLasso[i] <- results_innerloop$RecommendedLambda[1]
       OptimumGLasso[i] <- results_innerloop$RecommendedLambda[2]
       #estimatedP <- results_innerloop$P_hat
