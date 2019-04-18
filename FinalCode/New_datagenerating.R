@@ -1,7 +1,7 @@
 set.seed(1)
 
-Perc0 = .3   #.3 or .5
-PropNoise = 0.005  # .005, .3
+Perc0 = .5   #.3 or .5
+PropNoise = 0.3 # .005, .3
 
 I <- 20     # 20 or 100
 J1 <- 120    # 40 or 120
