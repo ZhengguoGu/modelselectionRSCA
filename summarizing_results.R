@@ -115,7 +115,7 @@ p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Proportion of loadings correctedly selected") +
   scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=20, J1=40, J2=10") +
+  ggtitle("I=20, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
@@ -124,3 +124,21 @@ p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   facet_grid(. ~ condition)
 p
 
+Tucker_results <- rbind(tucker_result_Sim1, tucker_result_Sim2, tucker_result_Sim3, tucker_result_Sim4)
+Tucker_final<- data.frame(apply(Tucker_results[, 1:6], 2, as.numeric))
+Tucker_final$condition <- Tucker_results[, 7]
+colnames(Tucker_final)[c(5, 6)] <- c("BL", "SS")
+dat_temp <- melt(Tucker_final,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC", "IS", "BL", "SS"))
+
+p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
+  geom_boxplot()+
+  scale_y_continuous(name = "Tucker congruence") +
+  scale_x_discrete(name = "Variable selection methods") +
+  ggtitle("I=20, J1=40, J2=10") +    #do not forget to manually change this.
+  theme_bw() +
+  theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
+        text = element_text(size = 14, family = "Tahoma"),
+        axis.title = element_text(face="bold"),
+        axis.text.x=element_text(size = 12))+
+  facet_grid(. ~ condition)
+p_tucker
