@@ -9,7 +9,7 @@ library(gridExtra)
 
 ################ PART 1: Boxplots (2 data blocks) ################################
 
-# I. summurizing data; condition: I:20, J1:40, J2:10
+# I. summurizing data; 
 
 # Sim_1 0.5% noise and 30% zero ######
 #(note: load data by hand)
@@ -115,7 +115,7 @@ p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Proportion of loadings correctedly selected") +
   scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=20, J1=40, J2=10") +    #do not forget to manually change this.
+  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
@@ -134,7 +134,7 @@ p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Tucker congruence") +
   scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=20, J1=40, J2=10") +    #do not forget to manually change this.
+  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
