@@ -332,7 +332,9 @@ while(n_dataset <= N_dataset){
   
   post_data1 <- RegularizedSCA::pre_process(my_data_list$data[, 1:J1])
   post_data2 <- RegularizedSCA::pre_process(my_data_list$data[, (J1+1):(J1+J2)])
-  POST_data <- cbind(post_data1, post_data2)
+  post_data3 <- RegularizedSCA::pre_process(my_data_list$data[, (J1+J2+1):(J1+J2+J3)])
+  post_data4 <- RegularizedSCA::pre_process(my_data_list$data[, (J1+J2+J3+1):(J1+J2+J3+J4)])
+  POST_data <- cbind(post_data1, post_data2, post_data3, post_data4)
   
   LassoSequence = exp(seq(from = log(0.00000001), to = log(RegularizedSCA::maxLGlasso(POST_data, Jk, R)$Lasso), length.out = 500))  #we use Lasso only
   result_sim1_StabS <- M4_StabSelection(POST_data, Jk, R, LassoSequence = LassoSequence, N_loading = n_loading, Thr = .6, NRSTARTS, N_cores, nfolds, MaxIter)
