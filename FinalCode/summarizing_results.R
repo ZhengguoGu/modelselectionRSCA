@@ -113,7 +113,7 @@ dat_temp <- melt(PL_final,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC
 
 p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
-  scale_y_continuous(name = "Proportion of loadings correctedly selected") +
+  scale_y_continuous(name = "Proportion of loadings correctedly selected", limits = c(0, 1)) +
   scale_x_discrete(name = "Variable selection methods") +
   ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
@@ -132,7 +132,7 @@ dat_temp <- melt(Tucker_final,id.vars="condition", measure.vars=c("CV", "RdCV", 
 
 p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
-  scale_y_continuous(name = "Tucker congruence") +
+  scale_y_continuous(name = "Tucker congruence", limits = c(0, 1)) +
   scale_x_discrete(name = "Variable selection methods") +
   ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
@@ -142,3 +142,4 @@ p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
         axis.text.x=element_text(size = 12))+
   facet_grid(. ~ condition)
 p_tucker
+
