@@ -7,7 +7,7 @@ library(ggplot2)
 library(reshape2)
 library(gridExtra)
 
-################ PART 1: Boxplots (2 data blocks) ################################
+################ PART 1a: Boxplots (2 data blocks), variable correctly selected and zeros correctly identified ################################
 
 # I. summurizing data; 
 
@@ -142,4 +142,5 @@ p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
         axis.text.x=element_text(size = 12))+
   facet_grid(. ~ condition)
 p_tucker
+################################################################################################
 
