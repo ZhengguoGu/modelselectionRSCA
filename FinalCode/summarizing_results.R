@@ -157,10 +157,9 @@ num0_correct <- function(MATa, MATb){
   return(num_corr)
 }
 
-ratio_nonzero_zero <- function(set_directory, file_names){
-  
-  setwd(set_directory)
-  
+ratio_nonzero_zero <- function(file_names){
+
+  #file_names: it starts with "I_20_J1_120_J2_30", or something like this. 
   fnames <- paste(file_names, "_benchmark_CV.RData", sep = "")
   load(fnames)
   fnames <- paste(file_names, "_BIC_IS.RData", sep = "")
@@ -251,21 +250,48 @@ ratio_nonzero_zero <- function(set_directory, file_names){
   return(result)
 }
 
-# Sim_1 0.5% noise and 30% zero ######
-#(note: load data by hand)
-set_directory <- "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/0_005noise_0_3zeros"
+### folder 2block_I20_J120_30
 file_heading <- "I_20_J1_120_J2_30"
-result_sim1 <- ratio_nonzero_zero(set_directory, file_heading)
-save(result_sim1, file = "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/seperate_sim1.RData")
+# note, change directory to the correct subfolder: for example, for "Sim_1 0.5% noise and 30% zero" (see below), change directory to the 0_005noise_0_3zeros folder
+# Sim_1 0.5% noise and 30% zero ######
+result_sim1 <- ratio_nonzero_zero(file_heading)
+save(result_sim1, file = "seperate_sim1.RData")
 # Sim_2 0.5% noise and 50% zero ######
-set_directory <- "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/0_005noise_0_5zeros"
-result_sim2 <- ratio_nonzero_zero(set_directory, file_heading)
-save(result_sim2, file = "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/seperate_sim2.RData")
+result_sim2 <- ratio_nonzero_zero(file_heading)
+save(result_sim2, file = "seperate_sim2.RData")
 # Sim_3 30% noise and 30% zero #######
-set_directory <- "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/0_3noise_0_3zeros"
-result_sim3 <- ratio_nonzero_zero(set_directory, file_heading)
-save(result_sim3, file = "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/seperate_sim3.RData")
+result_sim3 <- ratio_nonzero_zero(file_heading)
+save(result_sim3, file = "seperate_sim3.RData")
 # Sim_4 30% noise and 50% zero #######
-set_directory <- "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/0_3noise_0_5zeros"
-result_sim4 <- ratio_nonzero_zero(set_directory, file_heading)
-save(result_sim4, file = "/Users/zhengguo/Dropbox/tilburg office/Research SCA/Project 3 model selection/1reviewSciRep/Simulations/2block_I20_J120_30/seperate_sim4.RData")
+result_sim4 <- ratio_nonzero_zero(file_heading)
+save(result_sim4, file = "seperate_sim4.RData")
+
+### folder 2block_I20_J40_10
+file_heading <- "I_20_J1_40_J2_10"  
+# Sim_1 0.5% noise and 30% zero ######
+result_sim1 <- ratio_nonzero_zero(file_heading)
+save(result_sim1, file = "seperate_sim1.RData")
+# Sim_2 0.5% noise and 50% zero ######
+result_sim2 <- ratio_nonzero_zero(file_heading)
+save(result_sim2, file = "seperate_sim2.RData")
+# Sim_3 30% noise and 30% zero #######
+result_sim3 <- ratio_nonzero_zero(file_heading)
+save(result_sim3, file = "seperate_sim3.RData")
+# Sim_4 30% noise and 50% zero #######
+result_sim4 <- ratio_nonzero_zero(file_heading)
+save(result_sim4, file = "seperate_sim4.RData")
+
+### folder 2block_I80_J40_10
+file_heading <- "I_80_J1_40_J2_10"
+# Sim_1 0.5% noise and 30% zero ######
+result_sim1 <- ratio_nonzero_zero(file_heading)
+save(result_sim1, file = "seperate_sim1.RData")
+# Sim_2 0.5% noise and 50% zero ######
+result_sim2 <- ratio_nonzero_zero(file_heading)
+save(result_sim2, file = "seperate_sim2.RData")
+# Sim_3 30% noise and 30% zero #######
+result_sim3 <- ratio_nonzero_zero(file_heading)
+save(result_sim3, file = "seperate_sim3.RData")
+# Sim_4 30% noise and 50% zero #######
+result_sim4 <- ratio_nonzero_zero(file_heading)
+save(result_sim4, file = "seperate_sim4.RData")
