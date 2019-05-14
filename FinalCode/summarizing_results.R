@@ -295,3 +295,57 @@ save(result_sim3, file = "seperate_sim3.RData")
 # Sim_4 30% noise and 50% zero #######
 result_sim4 <- ratio_nonzero_zero(file_heading)
 save(result_sim4, file = "seperate_sim4.RData")
+
+###### boxplots 
+library(ggplot2)
+library(reshape2)
+library(gridExtra)
+
+PL1_sim1 <- data.frame(result_sim1[, 1:6])  #variables correctly identified
+PL1_sim1$condition <- "0.5% noise and 30% zero"
+PL2_sim1 <- data.frame(result_sim1[, 7:12])  #zeros correctly identified
+PL2_sim1$condition <- "0.5% noise and 30% zero"
+PL1_sim2 <- data.frame(result_sim2[, 1:6])  #variables correctly identified
+PL1_sim2$condition <- "0.5% noise and 50% zero"
+PL2_sim2 <- data.frame(result_sim2[, 7:12])  #zeros correctly identified
+PL2_sim2$condition <- "0.5% noise and 50% zero"
+PL1_sim3 <- data.frame(result_sim3[, 1:6])  #variables correctly identified
+PL1_sim3$condition <- "30% noise and 30% zero"
+PL2_sim3 <- data.frame(result_sim3[, 7:12])  #zeros correctly identified
+PL2_sim3$condition <- "30% noise and 30% zero"
+PL1_sim4 <- data.frame(result_sim4[, 1:6])  #variables correctly identified
+PL1_sim4$condition <- "30% noise and 50% zero"
+PL2_sim4 <- data.frame(result_sim4[, 7:12])  #zeros correctly identified
+PL2_sim4$condition <- "30% noise and 50% zero"
+
+PL1 <- rbind(PL1_sim1, PL1_sim2, PL1_sim3, PL1_sim4)
+colnames(PL1)[1:6] <- c("CV", "RdCV", "BIC", "IS", "BL", "SS")
+dat_temp <- melt(PL1,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC", "IS", "BL", "SS"))
+p <- ggplot(dat_temp, aes(x = variable, y = value)) +
+  geom_boxplot()+
+  scale_y_continuous(name = "Proportion of non-zero loadings correctedly selected", limits = c(0, 1)) +
+  scale_x_discrete(name = "Variable selection methods") +
+  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
+  theme_bw() +
+  theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
+        text = element_text(size = 14, family = "Tahoma"),
+        axis.title = element_text(face="bold"),
+        axis.text.x=element_text(size = 12))+
+  facet_grid(. ~ condition)
+p
+
+PL2 <- rbind(PL2_sim1, PL2_sim2, PL2_sim3, PL2_sim4)
+colnames(PL2)[1:6] <- c("CV", "RdCV", "BIC", "IS", "BL", "SS")
+dat_temp <- melt(PL2,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC", "IS", "BL", "SS"))
+p <- ggplot(dat_temp, aes(x = variable, y = value)) +
+  geom_boxplot()+
+  scale_y_continuous(name = "Proportion of zero loadings correctedly identified", limits = c(0, 1)) +
+  scale_x_discrete(name = "Variable selection methods") +
+  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
+  theme_bw() +
+  theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
+        text = element_text(size = 14, family = "Tahoma"),
+        axis.title = element_text(face="bold"),
+        axis.text.x=element_text(size = 12))+
+  facet_grid(. ~ condition)
+p
