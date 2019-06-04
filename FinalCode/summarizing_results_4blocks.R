@@ -6,6 +6,9 @@
 library(ggplot2)
 library(reshape2)
 library(gridExtra)
+library(devtools)
+install_github("ZhengguoGu/RegularizedSCA")
+library(RegularizedSCA)
 
 ################ PART 1a: Boxplots (4 data blocks), variable correctly selected and zeros correctly identified ################################
 
@@ -114,8 +117,8 @@ dat_temp <- melt(PL_final,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC
 p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Proportion of loadings correctedly selected", limits = c(0, 1)) +
-  scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
+  scale_x_discrete(name = "Variable selection methods (4 blocks)") +
+  #ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
@@ -133,8 +136,8 @@ dat_temp <- melt(Tucker_final,id.vars="condition", measure.vars=c("CV", "RdCV", 
 p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Tucker congruence", limits = c(0, 1)) +
-  scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
+  scale_x_discrete(name = "Variable selection methods (4 blocks)") +
+  #ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
@@ -144,7 +147,7 @@ p_tucker <- ggplot(dat_temp, aes(x = variable, y = value)) +
 p_tucker
 ################################################################################################
 
-################ PART 1b: boxplot (2 data blocks), seperately for variable correctly selected and for zeros corrected identified ####################
+################ PART 1b: boxplot (4 data blocks), seperately for variable correctly selected and for zeros corrected identified ####################
 # (authors' comment: first we have to record the number of non-zero loadings that are correctly identified
 # and also the number of zero loadings that are correctly identified.)
 
@@ -157,18 +160,18 @@ num0_correct <- function(MATa, MATb){
   return(num_corr)
 }
 
-ratio_nonzero_zero <- function(file_names){
+ratio_nonzero_zero <- function(){
 
   #file_names: it starts with "I_20_J1_120_J2_30", or something like this. 
-  fnames <- paste(file_names, "_benchmark_CV.RData", sep = "")
+  fnames <- "1_benchmark_CV.RData"
   load(fnames)
-  fnames <- paste(file_names, "_BIC_IS.RData", sep = "")
+  fnames <- "3_BIC_IS.RData"
   load(fnames)
-  fnames <- paste(file_names, "_BOLASSO.RData", sep = "")
+  fnames <- "4_BOLASSO.RData"
   load(fnames)
-  fnames <- paste(file_names, "_RepeatedDCV.RData", sep = "")
+  fnames <- "2_RepeatedDCV.RData"
   load(fnames)
-  fnames <- paste(file_names, "_Stability.RData", sep = "")
+  fnames <- "5_Stability.RData"
   load(fnames)
   
   ###
@@ -251,50 +254,21 @@ ratio_nonzero_zero <- function(file_names){
 }
 
 ### folder 2block_I20_J120_30
-file_heading <- "I_20_J1_120_J2_30"
-# note, change directory to the correct subfolder: for example, for "Sim_1 0.5% noise and 30% zero" (see below), change directory to the 0_005noise_0_3zeros folder
+
+# note, change directory to the correct subfolder
 # Sim_1 0.5% noise and 30% zero ######
-result_sim1 <- ratio_nonzero_zero(file_heading)
+result_sim1 <- ratio_nonzero_zero()
 save(result_sim1, file = "seperate_sim1.RData")
 # Sim_2 0.5% noise and 50% zero ######
-result_sim2 <- ratio_nonzero_zero(file_heading)
+result_sim2 <- ratio_nonzero_zero()
 save(result_sim2, file = "seperate_sim2.RData")
 # Sim_3 30% noise and 30% zero #######
-result_sim3 <- ratio_nonzero_zero(file_heading)
+result_sim3 <- ratio_nonzero_zero()
 save(result_sim3, file = "seperate_sim3.RData")
 # Sim_4 30% noise and 50% zero #######
-result_sim4 <- ratio_nonzero_zero(file_heading)
+result_sim4 <- ratio_nonzero_zero()
 save(result_sim4, file = "seperate_sim4.RData")
 
-### folder 2block_I20_J40_10
-file_heading <- "I_20_J1_40_J2_10"  
-# Sim_1 0.5% noise and 30% zero ######
-result_sim1 <- ratio_nonzero_zero(file_heading)
-save(result_sim1, file = "seperate_sim1.RData")
-# Sim_2 0.5% noise and 50% zero ######
-result_sim2 <- ratio_nonzero_zero(file_heading)
-save(result_sim2, file = "seperate_sim2.RData")
-# Sim_3 30% noise and 30% zero #######
-result_sim3 <- ratio_nonzero_zero(file_heading)
-save(result_sim3, file = "seperate_sim3.RData")
-# Sim_4 30% noise and 50% zero #######
-result_sim4 <- ratio_nonzero_zero(file_heading)
-save(result_sim4, file = "seperate_sim4.RData")
-
-### folder 2block_I80_J40_10
-file_heading <- "I_80_J1_40_J2_10"
-# Sim_1 0.5% noise and 30% zero ######
-result_sim1 <- ratio_nonzero_zero(file_heading)
-save(result_sim1, file = "seperate_sim1.RData")
-# Sim_2 0.5% noise and 50% zero ######
-result_sim2 <- ratio_nonzero_zero(file_heading)
-save(result_sim2, file = "seperate_sim2.RData")
-# Sim_3 30% noise and 30% zero #######
-result_sim3 <- ratio_nonzero_zero(file_heading)
-save(result_sim3, file = "seperate_sim3.RData")
-# Sim_4 30% noise and 50% zero #######
-result_sim4 <- ratio_nonzero_zero(file_heading)
-save(result_sim4, file = "seperate_sim4.RData")
 
 ###### boxplots 
 library(ggplot2)
@@ -324,8 +298,8 @@ dat_temp <- melt(PL1,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC", "I
 p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Proportion of non-zero loadings correctedly selected", limits = c(0, 1)) +
-  scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
+  scale_x_discrete(name = "Variable selection methods (4 blocks)") +
+  #ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
@@ -340,8 +314,8 @@ dat_temp <- melt(PL2,id.vars="condition", measure.vars=c("CV", "RdCV", "BIC", "I
 p <- ggplot(dat_temp, aes(x = variable, y = value)) +
   geom_boxplot()+
   scale_y_continuous(name = "Proportion of zero loadings correctedly identified", limits = c(0, 1)) +
-  scale_x_discrete(name = "Variable selection methods") +
-  ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
+  scale_x_discrete(name = "Variable selection methods (4 blocks)") +
+  #ggtitle("I=80, J1=40, J2=10") +    #do not forget to manually change this.
   theme_bw() +
   theme(plot.title = element_text(size = 14, family = "Tahoma", face = "bold"),
         text = element_text(size = 14, family = "Tahoma"),
