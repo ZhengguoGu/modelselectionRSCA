@@ -20,29 +20,8 @@ R <- 5 # known based on previous research
 Lassosequence <- seq(0.0000001, maxLGlasso(data, num_var, R)$Lasso, length.out = 50)
 GLassosequence <- seq(0.0000001, maxLGlasso(data, num_var, R)$Glasso, length.out = 50)
 
-#2) load function M1_repeatedDoubleCV.R
-source("M1_repeatedDoubleCV.R")
 
-set.seed(115)
-
-ptm <- proc.time()
-result_fam_RDCV <- M1_repeatedDoubleCV(data,  R, num_var, N_cores = 5, LassoSequence = Lassosequence, GLassoSequence = GLassosequence, n_rep=20, n_seg=3, NRSTARTS = 5)
-
-temp_lasso <- as.data.frame(result_fam_RDCV$Lasso)
-temp_lasso$Var1 <- sort(as.numeric(levels(temp_lasso$Var1)))
-LASSO <- max(temp_lasso[temp_lasso[,2] == max(temp_lasso[,2]),1])  #the first max ensures that the largest Lasso value is chosen, in case more than one lasso value is recommended by M1_repeatedDoubleCV
-temp_glasso <- as.data.frame(result_fam_RDCV$GroupLasso)
-temp_glasso$Var1 <- sort(as.numeric(levels(temp_glasso$Var1)))
-GLASSO <- max(temp_glasso[temp_glasso[,2] == max(temp_glasso[,2]),1])
-
-final_RDCV <- RegularizedSCA::sparseSCA(data, num_var, R, LASSO = LASSO, GROUPLASSO = GLASSO, MaxIter = 400,
-                                        NRSTARTS = 20, method = "component")
-
-savetime_family_RdCV <- proc.time() - ptm
-final_RDCV$Pmatrix
-save(final_RDCV, savetime_family_RdCV, file="family_RdCV.RData")
-
-#3) load function M2_BIC12andIS.R 
+#2) load function M2_BIC12andIS.R 
 source("M2_BIC12andIS.R")
 
 set.seed(115)
@@ -60,25 +39,16 @@ save(final_IS, savetime_family_IS, file="family_IS.RData")
 # In Table 2, the component loading matrix obtained from Gu and Van Deun 2018, the authors undo the shrinkage, Hence, we undo the shrinkage here. 
 
 load("familytarget.RData")  # this is the T matrix of the Family data from Gu and Van deun 2018.
-perm1 <- RegularizedSCA::TuckerCoef(family_target, final_RDCV$Tmatrix)$perm
-final_RDCV_result <- final_RDCV$Pmatrix[, perm1]  #final P matrix for RdCV
 
 perm2 <- RegularizedSCA::TuckerCoef(family_target, final_IS$Tmatrix)$perm
 final_IS_result <- final_IS$Pmatrix[, perm2]   #final P matrix for IS
 
 
 set.seed(115)
-final_fam_RdCV <- undoShrinkage(data, R = 5, 
-                                final_RDCV_result)
-final_fam_RdCV$Pmatrix
-
 final_fam_IS <- undoShrinkage(data, R = 5, 
                               final_IS_result)  #position of components changed so as to be compared to the results by RdCV
 final_fam_IS$Pmatrix
-
-final_fam <- cbind(final_fam_RdCV$Pmatrix, final_fam_IS$Pmatrix)
-
-write.table(final_fam, "final_fam.csv", sep = ",")
+write.table(final_fam_IS$Pmatrix, "final_fam.csv", sep = ",")
 
 
 
