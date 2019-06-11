@@ -46,10 +46,11 @@ load("her_IS.RData")
 set.seed(115)
 
 final_her_IS <- undoShrinkage(herring_data, R, 
-                              her_IS_Pmatrix)  #position of components changed so as to be compared to the results by RdCV
+                              final_her_IS$Pmatrix)  
 final_her_IS$Pmatrix
-write.table(final_her_IS$Pmatrix, "final_her.csv", sep = ",")
-
+final_her_IS$Tmatrix
+write.table(final_her_IS$Pmatrix, "final_herring_P.csv", sep = ",")
+write.table(final_her_IS$Tmatrix, "final_herring_T.csv", sep = ",")
 
 ########## 2. re-analysis of the parent-child relationship survey data
 #1) load data
