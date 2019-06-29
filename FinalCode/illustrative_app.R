@@ -53,8 +53,8 @@ write.table(final_her_IS$Tmatrix, "final_herring_T.csv", sep = ",")
 # 1) load data 
 MyData <- read.csv(file="metabolomics.csv", header=TRUE, sep=",")
 
-meta1 <- pre_process(MyData[, 1:144])
-meta2 <- pre_process(MyData[, 145:188])
+meta1 <- pre_process(MyData[, 1:144], weight = TRUE)
+meta2 <- pre_process(MyData[, 145:188], weight = TRUE)
 metabolomics_data <- cbind(meta1, meta2)
 num_var <- c(144,4)
 
@@ -78,11 +78,7 @@ savetime_meta_IS <- proc.time() - ptm
 final_meta_IS$Pmatrix
 save(final_meta_IS, savetime_meta_IS, file="meta_IS.RData")
 
-
-#3) generate a table, not needed in the paper
-
 set.seed(115)
-
 final_meta_IS <- undoShrinkage(metabolomics_data, R, 
                                final_meta_IS$Pmatrix) 
 final_meta_IS$Pmatrix
