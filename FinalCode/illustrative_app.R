@@ -153,7 +153,8 @@ final_fam_IS <- undoShrinkage(data, R = 5,
 final_fam_IS$Pmatrix
 write.table(final_fam_IS$Pmatrix, "final_fam.csv", sep = ",")
 
-
+#!note, the final_fam_IS$Pmatrix is different from the the reported matrix in paper in terms of signs. because as SCA is invariant with respect to the sign, we manually changed the signs
+# so that it is easier to compared to Figure 2. The interpretation does not change as a result of change of signs. 
 
 
 
