@@ -53,8 +53,8 @@ write.table(final_her_IS$Tmatrix, "final_herring_T.csv", sep = ",")
 # 1) load data 
 MyData <- read.csv(file="metabolomics.csv", header=TRUE, sep=",")
 
-meta1 <- pre_process(MyData[, 1:144], weight = TRUE)
-meta2 <- pre_process(MyData[, 145:188], weight = TRUE)
+meta1 <- pre_process(MyData[, 1:144])
+meta2 <- pre_process(MyData[, 145:188])
 metabolomics_data <- cbind(meta1, meta2)
 num_var <- c(144,4)
 
