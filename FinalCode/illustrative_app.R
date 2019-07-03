@@ -51,7 +51,7 @@ write.table(final_her_IS$Tmatrix, "final_herring_T.csv", sep = ",")
 
 ######## 2. analysis of metabolomics data  ########################
 # 1) load data 
-MyData <- read.csv(file="metabolomics.csv", header=TRUE, sep=",")
+MyData <- read.csv(file="metabolomics.csv", header=TRUE, sep=",") #cannot share on Github! Stored at the authors local computers.
 
 meta1 <- pre_process(MyData[, 1:144])
 meta2 <- pre_process(MyData[, 145:188])
@@ -153,8 +153,8 @@ final_fam_IS <- undoShrinkage(data, R = 5,
 final_fam_IS$Pmatrix
 write.table(final_fam_IS$Pmatrix, "final_fam.csv", sep = ",")
 
-#!note, the final_fam_IS$Pmatrix is different from the the reported matrix in paper in terms of signs. because as SCA is invariant with respect to the sign, we manually changed the signs
-# so that it is easier to compared to Figure 2. The interpretation does not change as a result of change of signs. 
+#!note, the final_fam_IS$Pmatrix is different from the the reported matrix in paper in terms of signs. Because regularized SCA is invariant with respect to the sign, we manually changed the signs
+# so that it is easier to compared to Figure 2. The interpretation does not change as a result of change of signs.
 
 
 
